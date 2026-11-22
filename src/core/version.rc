@@ -1,0 +1,31 @@
+#pragma code_page(65001)
+#include <winver.h>
+#include "version.h"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION REFRAME_VERSION_RESOURCE
+ PRODUCTVERSION REFRAME_VERSION_RESOURCE
+ FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+ FILEFLAGS 0
+ FILEOS VOS_NT_WINDOWS32
+ FILETYPE VFT_DLL
+ FILESUBTYPE 0
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", REFRAME_AUTHOR
+            VALUE "FileDescription", REFRAME_PRODUCT_NAME
+            VALUE "FileVersion", REFRAME_VERSION_STRING
+            VALUE "InternalName", "ReFrame"
+            VALUE "OriginalFilename", "d3d12.dll"
+            VALUE "ProductName", REFRAME_PRODUCT_NAME
+            VALUE "ProductVersion", REFRAME_VERSION_STRING
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 1200
+    END
+END
