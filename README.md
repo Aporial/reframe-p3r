@@ -2,103 +2,134 @@
 
 ![Release 1.0.0](https://img.shields.io/badge/release-1.0.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-Modern anti-aliasing and upscaling for Persona 3 Reload, seamlessly integrated into the game's native graphics menu.
+Smooth jagged edges and reduce shimmering in **Persona 3 Reload** without setting Rendering Scale to 200%. Use DLAA, FSR Native AA, or XeSS Native AA for cleaner visuals at your screen’s resolution. If you want more performance, choose an upscaling mode.
 
-- **Native in-game graphics settings** for NVIDIA DLAA/DLSS, AMD FSR and Intel XeSS, plus the game's Original TAA.
-- **Automatic render scale management** and **automatic language detection** for all 13 supported interface languages.
-- **Launch directly from Steam.** No ReShade, overlays, mod loaders or external applications are needed to run the mod.
+**[Download RE:FRAME v1.0.0](https://github.com/Aporial/reframe-p3r/releases/latest)**
 
-![Persona 3 Reload's native graphics settings with RE:FRAME options](docs/images/settings.png)
+![Persona 3 Reload’s native Graphics menu showing the RE:FRAME settings](docs/images/settings.png)
 
-By **Aporia**. This is a standalone mod for Persona 3 Reload. Future RE:FRAME mods for other games will be separate projects.
+*RE:FRAME’s options appear in Persona 3 Reload’s own Graphics menu.*
 
-[Modes](#modes) · [DLSS models](#dlss-models) · [Requirements](#requirements) · [Installation](#installation) · [Settings](#settings) · [Limitations](#limitations) · [Build](#build) · [License](#license)
+## Installation
 
-## Modes
+1. Close the game and download **REFRAME-P3R-v1.0.0.zip** from [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest).
+2. In Steam, right-click **Persona 3 Reload** and choose **Properties → Installed Files → Browse**.
+3. Extract the ZIP into the folder that already contains `P3R`. The ZIP puts `d3d12.dll` next to `P3R.exe` in `P3R\Binaries\Win64`.
+4. Launch the game normally through Steam.
+5. Open **Graphics** and select **Anti-Aliasing Technology** just below **Rendering Scale**. Pick a quality mode if one is available, then confirm your changes.
 
-Availability depends on the GPU, driver and the modes reported by the runtime. Native AA renders at 100%. Each upscaler queries its own recommended internal resolution.
+**Already have a `d3d12.dll` in `P3R\Binaries\Win64`?** Another mod may use it. Check which mod owns it and follow that mod’s removal instructions before extracting the ZIP.
+
+The ZIP includes the mod and its graphics runtimes. Setup takes place in the normal Graphics menu, with no ReShade, external mod loader, overlay, separate launcher, or manual config edits.
+
+### Updating and uninstalling
+
+- **Update** · Close the game, run the previous version’s uninstaller, and extract the new ZIP. To keep settings from a development build, leave `P3RGraphicsEnhanced\Settings.ini` in place until RE:FRAME saves to `ReFrame\Settings.ini`.
+- **Uninstall** · Close the game and run `Remove-ReFrame.ps1` from `P3R\Binaries\Win64\ReFrame`. The script checks file hashes and keeps generated settings and logs. Add `-WhatIf` to preview. [Installation and removal guide](docs/INSTALLATION.md)
+
+[Installation](#installation) · [Why 100%?](#why-not-just-use-200-rendering-scale) · [Choose a mode](#which-mode-should-i-use) · [Features](#features) · [Hardware](#supported-hardware) · [Advanced settings](#advanced-settings-and-modes) · [Compatibility](#compatibility-and-limitations) · [Troubleshooting](#troubleshooting) · [Build](#building-from-source) · [License](#license)
+
+## Why not just use 200% Rendering Scale?
+
+At 1920×1080, jagged edges and shimmering thin details can be easy to spot. Raising the game’s Rendering Scale is one way to smooth them out, but it increases the amount of work your GPU has to do.
+
+| Rendering Scale | What the game renders on a 1080p screen |
+| --- | --- |
+| **100%** | 1920×1080, about 2.1 million pixels per frame |
+| **200%** | 3840×2160, about 8.3 million pixels per frame |
+
+**200% doubles both dimensions and renders four times as many pixels.** Native AA gives you another way to smooth edges at 100% by combining information from consecutive frames. It has its own GPU cost, and how it compares with 200% depends on the scene.
+
+Upscaling renders fewer pixels than your screen displays. It can raise FPS when the GPU is the bottleneck.
+
+## Which mode should I use?
+
+- **Original TAA** · The game’s built-in anti-aliasing with manual Rendering Scale.
+- **NVIDIA DLAA** · Smoother edges at 100% scale. Start here on a compatible RTX GPU when image quality is your priority.
+- **AMD FSR Native AA** · AMD’s anti-aliasing at 100% scale on supported hardware.
+- **Intel XeSS Native AA** · Intel’s anti-aliasing at 100% scale on supported hardware.
+- **DLSS / FSR / XeSS Quality** · Start here for upscaling. It renders at a lower resolution and reconstructs the picture to your selected output resolution.
+- **Balanced / Performance** · Render at a lower resolution than Quality to reduce GPU load further. Fine details may look softer.
+
+| Goal | Recommended option |
+| --- | --- |
+| Image quality first on RTX | NVIDIA DLAA |
+| Native AA without RTX | FSR Native AA or XeSS Native AA, where available |
+| More FPS | DLSS, FSR, or XeSS **Quality** |
+| Maximum performance | **Performance**, or **Balanced** for a middle ground |
+
+Availability and results depend on your GPU, driver, and the scene. The menu shows the options your system reports as available.
+
+## Features
+
+- Native-resolution anti-aliasing and upscaling through NVIDIA DLAA/DLSS, AMD FSR, and Intel XeSS.
+- Game-native graphics controls with automatic Rendering Scale for SDK modes.
+- Automatic language detection for 13 interface languages.
+- ZIP installation and removal. Launch from Steam with the game’s own menu and controls.
+
+## Requirements
+
+RE:FRAME requires a legally purchased copy of Persona 3 Reload on Steam, Windows 10 or 11 x64, DirectX 12, and a suitable graphics driver. Release 1.0.0 targets **Steam build 22672075** (app ID **2161700**).
+
+### Supported hardware
+
+| Technology | GPU support |
+| --- | --- |
+| **NVIDIA DLAA / DLSS** | Compatible GeForce RTX GPUs with a supported driver. [NVIDIA DLSS](https://www.nvidia.com/en-us/geforce/technologies/dlss/) |
+| **AMD FSR** | The SDK can offer FSR 4.1.2 on supported Radeon RX 6000, 7000, and 9000 series GPUs. FSR 3.1.6 is available on other GPUs that meet the SDK’s requirements. [AMD FSR SDK](https://gpuopen.com/amd-fsr-sdk/) |
+| **Intel XeSS** | Compatible Intel Iris Xe and Arc GPUs, plus supported GPUs from other vendors with Shader Model 6.4 and DP4a acceleration. [Intel XeSS requirements](https://github.com/intel/xess/blob/v3.0.2/doc/xess_sr_developer_guide_english.md#requirements) |
+
+XeSS needs the Microsoft Visual C++ x64 Redistributable **14.40.33810 or later**. Intel lists Windows 10 build 19043 and Windows 11 build 22000 as the minimum versions for this SDK. [Intel XeSS deployment](https://github.com/intel/xess/blob/v3.0.2/doc/xess_sr_developer_guide_english.md#deployment) · [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
+
+## Advanced settings and modes
+
+Choose a backend with **Anti-Aliasing Technology**, then choose an available **Quality Mode**. The **DLSS Model** row appears for NVIDIA DLSS. **Rendering Scale** is editable with Original TAA and shows the selected SDK target when a backend manages it. Use the game’s normal prompt to confirm or cancel changes. You can set a new manual scale while switching back to Original TAA in the same save.
+
+### Available modes
 
 | Mode | NVIDIA DLSS | AMD FSR | Intel XeSS |
 | --- | --- | --- | --- |
-| Native AA | DLAA | Native AA | Native AA |
+| Native AA (100%) | DLAA | Native AA | Native AA |
 | Ultra Quality Plus | — | — | When available |
 | Ultra Quality | — | — | When available |
 | Quality | ✓ | ✓ | ✓ |
 | Balanced | ✓ | ✓ | ✓ |
 | Performance | ✓ | ✓ | ✓ |
 
-**Original TAA** keeps the game's built-in anti-aliasing and manual Rendering Scale. There are up to 14 SDK modes across the three vendors, plus Original TAA.
+The three SDKs offer up to 14 modes in total. Original TAA is also available.
 
-## DLSS models
+### DLSS models
 
-| Setting | Behavior |
+| Model | What it requests |
 | --- | --- |
-| **Auto (Recommended)** | Requests K for DLAA, Quality and Balanced, and M for Performance. |
-| **DLSS 4 — Standard (K)** | Requests DLSS 4's transformer model. |
-| **DLSS 4.5 — Optimized (M)** | Requests the DLSS 4.5 model recommended for Performance. |
-| **DLSS 4.5 — Detail (L)** | Requests the DLSS 4.5 model NVIDIA recommends for 4K Ultra Performance. RE:FRAME exposes the model separately from quality modes. |
+| **Auto (Recommended)** | K for DLAA, Quality, and Balanced. M for Performance. |
+| **DLSS 4 — Standard (K)** | The DLSS 4 transformer model. |
+| **DLSS 4.5 — Optimized (M)** | The DLSS 4.5 model NVIDIA recommends for Performance. |
+| **DLSS 4.5 — Detail (L)** | The DLSS 4.5 model NVIDIA recommends for 4K Ultra Performance. The model setting is separate from the quality preset. |
 
-M and L can cost more GPU time on GeForce RTX 20 and 30 series. Model choices are requests to the DLSS runtime. [NVIDIA DLSS 4.5 model guidance](https://www.nvidia.com/en-us/geforce/news/dlss-4-5-super-resolution-available-now/)
-
-## Requirements
-
-- A legally purchased copy of **Persona 3 Reload on Steam**, app ID **2161700**, build **22672075**.
-- Windows 10 or 11 x64, DirectX 12 and a driver that supports the backend you select.
-- XeSS requires the Microsoft Visual C++ x64 Redistributable **14.40.33810 or later**. Intel lists Windows 10 build 19043 or later and Windows 11 build 22000 or later for this SDK. [Intel XeSS deployment requirements](https://github.com/intel/xess/blob/v3.0.2/doc/xess_sr_developer_guide_english.md#deployment) · [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
-
-| Backend | GPU requirements |
-| --- | --- |
-| NVIDIA DLAA / DLSS | Compatible NVIDIA GeForce RTX GPU and a driver accepted by NGX. [NVIDIA DLSS](https://www.nvidia.com/en-us/geforce/technologies/dlss/) |
-| AMD FSR | FSR 4.1.2 on hardware reported as compatible by the AMD SDK, including supported Radeon RX 6000, 7000 and 9000 series. On other compatible GPUs the mod can use the cross-vendor FSR 3.1.6 path. [AMD FSR SDK](https://gpuopen.com/amd-fsr-sdk/) |
-| Intel XeSS | D3D12-capable Intel Iris Xe or Arc hardware, or a compatible GPU from another vendor with Shader Model 6.4 and DP4a acceleration. [Intel XeSS requirements](https://github.com/intel/xess/blob/v3.0.2/doc/xess_sr_developer_guide_english.md#requirements) |
-
-See the [compatibility notes](docs/COMPATIBILITY.md) for the distinction between SDK requirements and mod testing.
+M and L can take more GPU time on RTX 20 and 30 series cards. [NVIDIA’s DLSS model guidance](https://www.nvidia.com/en-us/geforce/news/dlss-4-5-super-resolution-available-now/)
 
 ### Interface languages
 
-English, French, Italian, German, Spanish (Spain), Japanese, Korean, Polish, Portuguese (Brazil), Russian, Simplified Chinese, Traditional Chinese and Turkish. The mod follows the game's interface language and uses English as a fallback. [Persona 3 Reload on Steam](https://store.steampowered.com/app/2161700/Persona_3_Reload/)
+English, French, Italian, German, Spanish (Spain), Japanese, Korean, Polish, Portuguese (Brazil), Russian, Simplified Chinese, Traditional Chinese, and Turkish. RE:FRAME follows the game’s language and falls back to English. [Persona 3 Reload on Steam](https://store.steampowered.com/app/2161700/Persona_3_Reload/)
 
-## Installation
+## Compatibility and limitations
 
-1. Close the game. In Steam, open **Properties → Installed Files → Browse**.
-2. Download `REFRAME-P3R-v1.0.0.zip` and its SHA-256 file from the release. Compare the hash if desired.
-3. Check `P3R\Binaries\Win64` for an existing `d3d12.dll`. Remove a previous installation with its own uninstaller or back up any third-party proxy before proceeding.
-4. Extract the ZIP directly into the game root, the folder that already contains `P3R`. Launch the game normally from Steam.
-
-### Updating
-
-Close the game and back up its existing mod directory. Run the previous version's removal script, then extract the new ZIP. The new release reads `P3RGraphicsEnhanced\Settings.ini` if `ReFrame\Settings.ini` is absent. Keep the older settings file through the first launch. The next settings change writes to the new directory.
-
-### Uninstalling
-
-Close the game. In `P3R\Binaries\Win64\ReFrame`, run `.\Remove-ReFrame.ps1`. Add `-WhatIf` to preview. The script checks the manifest, allowed paths and hashes, and keeps generated settings and logs.
-
-## Settings
-
-Open the native **Graphics** page. The mod adds rows directly below **Rendering Scale**.
-
-| Setting | What it controls |
-| --- | --- |
-| **Anti-Aliasing Technology** | Original TAA, NVIDIA DLSS, AMD FSR or Intel XeSS, where supported. |
-| **Quality Mode** | Native AA or an available upscaling preset. Only shown for an SDK backend. |
-| **DLSS Model** | Auto, K, M or L. Only shown for NVIDIA DLSS. |
-| **Rendering Scale** | Editable for Original TAA. For SDK modes it shows the selected target and the mod manages it. |
-
-Confirm or cancel changes through the game's normal prompt. Returning to Original TAA lets you confirm a new manual scale in the same transaction.
-
-## Limitations
-
-- Support is scoped to the listed Steam build. A game update can change the menu or renderer interfaces the mod uses.
-- Original TAA handles unrecognized and secondary passes, including planar reflections. RE:FRAME focuses on anti-aliasing and upscaling.
-- Earlier development builds verified DLAA, DLSS, FSR 3.1.6 and cross-vendor XeSS on an RTX 5060. Version 1.0.0 has been compiled and statically checked. In-game validation for this release, Radeon FSR 4 and Intel-optimized XeSS is pending.
+- **Game updates** · Support for Steam builds other than 22672075 is unverified. Other stores, non-Windows runtimes, and stacking D3D12 proxies are also unverified.
+- **Fallback** · The game uses Original TAA for unrecognized render passes and secondary views such as planar reflections.
+- **Testing** · Version 1.0.0 passed compilation and static checks. Earlier development builds exercised DLAA, DLSS, FSR 3.1.6, and cross-vendor XeSS on an RTX 5060. In-game testing of 1.0.0 and separate hardware testing of Radeon FSR 4 and Intel-optimized XeSS on Arc are pending. Performance varies by system. [Test coverage and compatibility](docs/COMPATIBILITY.md)
 
 ## Troubleshooting
 
-If the menu rows are missing, check the Steam build and verify that `d3d12.dll` is next to `P3R.exe`. If a backend is absent, check its runtime, GPU and driver. The mod logs detection, fallback and the actual viewport to `P3R\Binaries\Win64\ReFrame\ReFrame.log`. See [Troubleshooting](docs/TROUBLESHOOTING.md).
+- **No RE:FRAME options?** Check the Steam build and confirm that `d3d12.dll` is next to `P3R.exe`.
+- **No option for your preferred technology?** Check hardware support, your driver, and the runtime files in `P3R\Binaries\Win64\ReFrame`. For XeSS, also check the Visual C++ Redistributable.
+- **Rendering Scale disabled?** That is expected under DLSS, FSR, or XeSS. Select Original TAA to adjust it by hand.
 
-## Build
+For more help, see [Troubleshooting](docs/TROUBLESHOOTING.md). The mod records the actual render size and any fallback in `P3R\Binaries\Win64\ReFrame\ReFrame.log`.
 
-Open the **x64 Native Tools Command Prompt for Visual Studio 2022** with the C++ workload and Windows SDK installed. Then run:
+## Building from source
+
+From the **x64 Native Tools Command Prompt for Visual Studio 2022** with the C++ workload and Windows SDK installed, run:
 
 ```powershell
 powershell -NoProfile -File scripts\Fetch-Dependencies.ps1
@@ -106,11 +137,11 @@ powershell -NoProfile -File build.ps1
 powershell -NoProfile -File scripts\New-Release.ps1
 ```
 
-See [Building](docs/BUILDING.md), [Architecture](docs/ARCHITECTURE.md), [Changelog](CHANGELOG.md) and [Contributing](CONTRIBUTING.md).
+[Build guide](docs/BUILDING.md) · [Architecture](docs/ARCHITECTURE.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md)
 
 ## License
 
-Copyright © 2026 Aporia. RE:FRAME’s original source code is licensed under the [MIT License](LICENSE). Bundled SDK runtimes, the NVIDIA NGX loader, MinHook/HDE, and other third-party components retain their respective terms and notices. The game and its assets remain subject to their owners’ terms. See [Third-party notices](THIRD_PARTY_NOTICES.md) and [vendor licenses](licenses/).
+Copyright © 2026 Aporia. The MIT License covers RE:FRAME’s original source code. Bundled SDK runtimes, the NVIDIA NGX loader, MinHook/HDE, and other third-party components retain their own terms and notices. The game and its assets remain subject to their owners’ terms. [MIT License](LICENSE) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [Vendor licenses](licenses/)
 
 ## Disclaimer
 
@@ -118,6 +149,4 @@ RE:FRAME is an independent, unofficial fan-made project.
 It is not affiliated with, endorsed by, or sponsored by ATLUS, SEGA, NVIDIA, AMD, or Intel.
 All trademarks belong to their respective owners.
 
-RE:FRAME requires a legally purchased copy of Persona 3 Reload. It does not distribute game files, bypass DRM, or unlock DLC. The screenshot documents the interface and depicts assets from the game.
-
-See the applicable game terms for modification and distribution conditions. [Persona 3 Reload Steam EULA](https://store.steampowered.com/eula/2161700_eula_1)
+RE:FRAME requires a legally purchased copy of Persona 3 Reload. It does not distribute game files, bypass DRM, or unlock DLC. The screenshot documents the interface and depicts assets from the game. [Persona 3 Reload Steam EULA](https://store.steampowered.com/eula/2161700_eula_1)
