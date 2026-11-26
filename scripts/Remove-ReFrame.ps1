@@ -17,7 +17,7 @@ function Get-SafeReframeItem([string]$Path) {
     $entry
 }
 
-foreach ($folder in @($bin, $data, (Join-Path $data 'Licenses'))) {
+foreach ($folder in @($bin, $data, (Join-Path $data 'Licenses'), (Join-Path $data 'i18n'))) {
     $entry = Get-SafeReframeItem $folder
     if ($entry -and !$entry.PSIsContainer) { throw "Expected a directory: $folder" }
 }
@@ -41,6 +41,20 @@ $allowed = @(
     'ReFrame/Licenses/Intel-ThirdParty.txt',
     'ReFrame/Licenses/MinHook.txt'
 )
+switch -CaseSensitive ($manifest.Version) {
+    '1.0.0' {}
+    '1.1.0' {
+        $allowed += 'ReFrame/Licenses/AMD-FidelityFX-CAS.txt'
+        if (@($manifest.Files).Count -eq ($allowed.Count + 1)) {
+            $allowed += 'ReFrame/Sharpness-Testing.md' # The 1.1.0 test archive.
+        } else {
+            foreach ($language in @('de-DE','es-ES','fr-FR','it-IT','ja-JP','ko-KR','pl-PL','pt-BR','ru-RU','tr-TR','uk-UA','zh-CN','zh-TW')) {
+                $allowed += "ReFrame/i18n/INSTALLATION.$language.md"
+            }
+        }
+    }
+    default { throw 'The RE:FRAME manifest version is unsupported.' }
+}
 if ($manifest.Project -cne 'reframe-p3r' -or @($manifest.Files).Count -ne $allowed.Count) {
     throw 'The manifest is not a RE:FRAME release manifest.'
 }

@@ -2,13 +2,13 @@
 
 [English](../../README.md) · [Français](README.fr-FR.md) · [Italiano](README.it-IT.md) · [Deutsch](README.de-DE.md) · [Español (España)](README.es-ES.md) · [日本語](README.ja-JP.md) · **[한국어](README.ko-KR.md)** · [Polski](README.pl-PL.md) · [Português (Brasil)](README.pt-BR.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [Türkçe](README.tr-TR.md) · [Українська](README.uk-UA.md)
 
-<!-- source-readme: 834e57d57f2b49f6b6c8540a9c22bb0042aa92a7 -->
+<!-- source-readme: d635567e66ae8b9728ea8b204baf8079bd1c8590 -->
 
-![릴리스 1.0.0](https://img.shields.io/badge/release-1.0.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT 라이선스](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+![버전 1.1.0](https://img.shields.io/badge/release-1.1.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT 라이선스](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 **Persona 3 Reload**의 렌더링 배율을 200%로 높이지 않고도 계단 현상과 깜빡임을 줄일 수 있습니다. DLAA와 FSR·XeSS의 네이티브 AA는 화면 해상도에서 가장자리를 부드럽게 처리합니다. 프레임 속도를 높이고 싶다면 업스케일링 모드를 선택하세요.
 
-**[RE:FRAME v1.0.0 다운로드](https://github.com/Aporial/reframe-p3r/releases/latest)**
+**[공개된 RE:FRAME 릴리스](https://github.com/Aporial/reframe-p3r/releases/latest)**
 
 ![RE:FRAME 설정이 표시된 Persona 3 Reload의 그래픽 메뉴](../images/settings.png)
 
@@ -16,7 +16,7 @@
 
 ## 설치
 
-1. 게임을 종료하고 [GitHub 릴리스](https://github.com/Aporial/reframe-p3r/releases/latest)에서 **REFRAME-P3R-v1.0.0.zip**을 다운로드하세요.
+1. 게임을 종료한 뒤 [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest)에서 **REFRAME-P3R-v1.1.0.zip**을 다운로드하세요.
 2. Steam에서 **Persona 3 Reload**를 마우스 오른쪽 버튼으로 클릭하고 **속성 → 설치된 파일 → 찾아보기**를 선택하세요.
 3. `P3R` 폴더가 이미 있는 상위 폴더에 ZIP을 푸세요. `P3R\Binaries\Win64` 내의 `P3R.exe` 옆에 `d3d12.dll`이 배치됩니다.
 4. 평소처럼 Steam에서 게임을 실행하세요.
@@ -29,7 +29,7 @@ ZIP에 모드와 필요한 그래픽 라이브러리가 들어 있습니다. 게
 ### 업데이트와 제거
 
 - **업데이트** · 게임을 종료하고 이전 버전의 제거 스크립트를 실행한 다음 새 ZIP을 푸세요. 개발 버전의 설정을 유지하려면 RE:FRAME이 `ReFrame\Settings.ini`에 저장할 때까지 `P3RGraphicsEnhanced\Settings.ini`를 남겨 두세요.
-- **제거** · 게임을 종료하고 `P3R\Binaries\Win64\ReFrame`에서 `Remove-ReFrame.ps1`을 실행하세요. 스크립트는 파일 해시를 확인하고 생성된 설정과 로그를 보존합니다. `-WhatIf`을 추가하면 변경 내용을 미리 볼 수 있습니다. [설치 및 제거 안내](../INSTALLATION.md)
+- **제거** · 게임을 종료하고 `P3R\Binaries\Win64\ReFrame`에서 `Remove-ReFrame.ps1`을 실행하세요. 스크립트는 파일 해시를 확인하고 생성된 설정과 로그를 보존합니다. `-WhatIf`을 추가하면 변경 내용을 미리 볼 수 있습니다. [설치 및 제거 안내](INSTALLATION.ko-KR.md)
 
 [설치](#%EC%84%A4%EC%B9%98) · [렌더링 배율을 200%로 올리지 않아도 되는 이유](#%EB%A0%8C%EB%8D%94%EB%A7%81-%EB%B0%B0%EC%9C%A8%EC%9D%84-200%EB%A1%9C-%EC%98%AC%EB%A6%AC%EC%A7%80-%EC%95%8A%EC%95%84%EB%8F%84-%EB%90%98%EB%8A%94-%EC%9D%B4%EC%9C%A0) · [어떤 모드를 선택할까요?](#%EC%96%B4%EB%96%A4-%EB%AA%A8%EB%93%9C%EB%A5%BC-%EC%84%A0%ED%83%9D%ED%95%A0%EA%B9%8C%EC%9A%94) · [주요 기능](#%EC%A3%BC%EC%9A%94-%EA%B8%B0%EB%8A%A5) · [지원 그래픽 카드](#%EC%A7%80%EC%9B%90-%EA%B7%B8%EB%9E%98%ED%94%BD-%EC%B9%B4%EB%93%9C) · [고급 설정과 모드](#%EA%B3%A0%EA%B8%89-%EC%84%A4%EC%A0%95%EA%B3%BC-%EB%AA%A8%EB%93%9C) · [호환성과 제한 사항](#%ED%98%B8%ED%99%98%EC%84%B1%EA%B3%BC-%EC%A0%9C%ED%95%9C-%EC%82%AC%ED%95%AD) · [문제 해결](#%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0) · [소스에서 빌드](#%EC%86%8C%EC%8A%A4%EC%97%90%EC%84%9C-%EB%B9%8C%EB%93%9C) · [라이선스](#%EB%9D%BC%EC%9D%B4%EC%84%A0%EC%8A%A4)
 
@@ -73,7 +73,7 @@ ZIP에 모드와 필요한 그래픽 라이브러리가 들어 있습니다. 게
 
 ## 시스템 요구 사항
 
-RE:FRAME을 사용하려면 Steam에서 정식 구매한 Persona 3 Reload, Windows 10 또는 11 x64, DirectX 12와 호환되는 그래픽 드라이버가 필요합니다. 1.0.0의 대상은 **Steam 빌드 22672075**(앱 ID **2161700**)입니다.
+RE:FRAME을 사용하려면 Steam에서 정식 구매한 Persona 3 Reload, Windows 10 또는 11 x64, DirectX 12와 호환되는 그래픽 드라이버가 필요합니다. 1.1.0의 대상은 **Steam 빌드 22672075**(앱 ID **2161700**)입니다.
 
 ### 지원 그래픽 카드
 
@@ -88,6 +88,8 @@ XeSS는 Microsoft Visual C++ x64 재배포 가능 패키지 **14.40.33810 이상
 ## 고급 설정과 모드
 
 **안티앨리어싱 방식**에서 방식을 고른 뒤 지원되는 **품질 모드**를 선택하세요. NVIDIA DLSS를 사용하면 **DLSS 모델** 항목이 표시됩니다. **기본 TAA**에서는 렌더링 배율을 직접 조절할 수 있으며, SDK가 관리할 때는 해당 SDK의 목표 배율을 표시합니다. 게임의 확인 창에서 변경을 확정하거나 취소할 수 있습니다. **기본 TAA**로 돌아가면서 새 수동 배율을 정하고 한 번에 적용할 수도 있습니다.
+
+**선명도**는 DLAA, DLSS, FSR 또는 XeSS로 재구성한 뒤 HUD를 그리기 전에 화면의 세부 표현을 조절합니다. 기본값은 0%(꺼짐)이며 5% 단위로 100%까지 설정할 수 있습니다. 적용하면 게임을 다시 시작할 필요가 없습니다. 기술이나 품질 모드를 바꿔도 값은 유지됩니다. 기본 TAA에서는 항목이 숨겨집니다.
 
 ### 사용 가능한 모드
 
@@ -121,7 +123,7 @@ RTX 20 및 30 시리즈에서는 M과 L의 GPU 처리 시간이 더 길어질 �
 
 - **게임 업데이트** · Steam 빌드 22672075 이외의 빌드, 다른 스토어판, Windows 이외의 실행 환경, 여러 D3D12 프록시의 동시 사용은 확인하지 않았습니다.
 - **기본 방식으로 복귀** · 게임은 인식되지 않는 렌더링 단계나 평면 반사와 같은 보조 화면에 **기본 TAA**를 사용합니다.
-- **테스트** · 1.0.0은 컴파일과 정적 검사를 통과했습니다. 이전 개발 버전에서는 RTX 5060으로 DLAA, DLSS, FSR 3.1.6 및 여러 제조사에서 동작하는 XeSS 경로를 테스트했습니다. 1.0.0의 게임 내 테스트와 Radeon의 FSR 4 및 Arc의 Intel 최적화 XeSS에 대한 별도 실기기 테스트는 아직 진행하지 않았습니다. 성능은 시스템에 따라 다릅니다. [테스트 범위 및 호환성](../COMPATIBILITY.md)
+- **테스트** · RTX 5060에서 DLSS, FSR, XeSS의 성능 모드로 1080p 게임 내 선명도를 확인했습니다. 같은 GPU에서 사용 가능한 SDK 모드 14개를 오프라인으로도 확인했습니다. Radeon의 FSR 4와 Intel Arc에 최적화된 XeSS는 해당 하드웨어에서 별도로 확인해야 합니다. [테스트 범위 및 호환성](../COMPATIBILITY.md)
 
 ## 문제 해결
 

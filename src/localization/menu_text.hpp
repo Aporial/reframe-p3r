@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <string>
 #include <string_view>
 
 namespace reframe {
@@ -21,6 +22,8 @@ struct MenuText {
     std::array<const wchar_t*, 4> model_names;
     std::array<const wchar_t*, 4> model_help;
     const wchar_t* scale_target;
+    const wchar_t* sharpness;
+    const wchar_t* sharpness_help;
 };
 
 inline constexpr MenuText menu_text[] = {
@@ -33,7 +36,8 @@ inline constexpr MenuText menu_text[] = {
       L"The standard model for DLAA, Quality and Balanced. Lower GPU load than M and L.",
       L"Tuned for Performance. Higher GPU load on RTX 20 and 30.",
       L"Tuned for 4K Ultra Performance. Higher GPU load on RTX 20 and 30."},
-     L"SDK target: "},
+     L"SDK target: ", L"Sharpness",
+     L"Adjusts image sharpness after temporal reconstruction. Set to 0% to disable additional sharpening."},
     {L"ru", L"Технология сглаживания", L"Используйте TAA игры или временное сглаживание и масштабирование DLSS, FSR или XeSS.",
      L"Оригинальный TAA", L"Режим качества", L"Нативное сглаживание использует полное разрешение. Другие режимы снижают разрешение рендера для повышения FPS.",
      L"Нативное сглаживание", L"Ультракачество+", L"Ультракачество", L"Качество", L"Баланс", L"Производительность",
@@ -43,7 +47,8 @@ inline constexpr MenuText menu_text[] = {
       L"Стандарт для DLAA, качества и баланса. Нагрузка ниже, чем у M и L.",
       L"Для режима производительности. На RTX 20 и 30 повышает нагрузку.",
       L"Для ультрапроизводительности в 4K. На RTX 20 и 30 повышает нагрузку."},
-     L"Целевой масштаб SDK: "},
+     L"Целевой масштаб SDK: ", L"Резкость",
+     L"Регулирует резкость изображения после временной реконструкции. При 0% дополнительное повышение резкости отключено."},
     {L"ja", L"アンチエイリアス方式", L"ゲーム標準のTAA、またはDLSS、FSR、XeSSによる補正とアップスケーリングを選びます。",
      L"標準TAA", L"品質モード", L"ネイティブAAは等倍で描画します。品質を下げると描画負荷を軽減できます。",
      L"ネイティブAA", L"最高品質+", L"最高品質", L"品質", L"バランス", L"パフォーマンス",
@@ -53,7 +58,8 @@ inline constexpr MenuText menu_text[] = {
       L"DLAA、品質、バランス向けの標準モデルです。MやLより負荷を抑えます。",
       L"パフォーマンス向けです。RTX 20・30シリーズでは負荷が増えます。",
       L"4Kのウルトラパフォーマンス向けです。RTX 20・30シリーズでは負荷が増えます。"},
-     L"SDK の目標描画倍率："},
+     L"SDK の目標描画倍率：", L"シャープネス",
+     L"時間方向の再構成後に画像のシャープネスを調整します。0%で追加のシャープネスを無効にします。"},
     {L"ko", L"안티앨리어싱 방식", L"게임의 기본 TAA 또는 DLSS, FSR, XeSS의 안티앨리어싱과 업스케일링을 선택합니다.",
      L"기본 TAA", L"품질 모드", L"네이티브 AA는 원래 해상도를 사용합니다. 낮은 품질 모드는 렌더링 부하를 줄입니다.",
      L"네이티브 AA", L"울트라 품질+", L"울트라 품질", L"품질", L"균형", L"성능",
@@ -63,7 +69,8 @@ inline constexpr MenuText menu_text[] = {
       L"DLAA, 품질, 균형 모드의 표준 모델입니다. M과 L보다 부하가 낮습니다.",
       L"성능 모드에 최적화되었습니다. RTX 20 및 30 시리즈에서 부하가 늘어납니다.",
       L"4K 울트라 성능에 최적화되었습니다. RTX 20 및 30 시리즈에서 부하가 늘어납니다."},
-     L"SDK 목표 렌더링 배율: "},
+     L"SDK 목표 렌더링 배율: ", L"선명도",
+     L"시간적 재구성 후 이미지의 선명도를 조절합니다. 0%로 설정하면 추가 선명화가 꺼집니다."},
     {L"zh-Hans", L"抗锯齿技术", L"选择游戏原生 TAA，或使用 DLSS、FSR、XeSS 的抗锯齿和超分辨率。",
      L"原生 TAA", L"画质模式", L"原生抗锯齿使用完整分辨率。较低的画质模式可以提高性能。",
      L"原生抗锯齿", L"超高画质+", L"超高画质", L"画质", L"平衡", L"性能",
@@ -73,7 +80,8 @@ inline constexpr MenuText menu_text[] = {
       L"适用于 DLAA、画质和平衡模式，比 M 和 L 的显卡负载低。",
       L"针对性能模式优化。在 RTX 20 和 30 系列上负载更高。",
       L"针对 4K 超级性能模式优化。在 RTX 20 和 30 系列上负载更高。"},
-     L"SDK 目标渲染比例："},
+     L"SDK 目标渲染比例：", L"锐度",
+     L"调整时序重建后的图像锐度。设为 0% 可关闭额外锐化。"},
     {L"zh-Hant", L"反鋸齒技術", L"選擇遊戲原生 TAA，或使用 DLSS、FSR、XeSS 的反鋸齒與超解析度。",
      L"原生 TAA", L"畫質模式", L"原生反鋸齒使用完整解析度。較低的畫質模式可提升效能。",
      L"原生反鋸齒", L"超高畫質+", L"超高畫質", L"畫質", L"平衡", L"效能",
@@ -83,7 +91,8 @@ inline constexpr MenuText menu_text[] = {
       L"適用於 DLAA、畫質和平衡模式，比 M 和 L 的顯示卡負載低。",
       L"針對效能模式最佳化。在 RTX 20 和 30 系列上負載較高。",
       L"針對 4K 超高效能模式最佳化。在 RTX 20 和 30 系列上負載較高。"},
-     L"SDK 目標渲染比例："},
+     L"SDK 目標渲染比例：", L"銳利度",
+     L"調整時序重建後的影像銳利度。設為 0% 可關閉額外銳化。"},
     {L"fr", L"Anticrénelage", L"Utilisez le TAA du jeu ou l’anticrénelage et la mise à l’échelle de DLSS, FSR ou XeSS.",
      L"TAA d’origine", L"Mode de qualité", L"L’AA natif utilise la pleine résolution. Les autres modes peuvent améliorer les performances.",
      L"AA natif", L"Ultra qualité +", L"Ultra qualité", L"Qualité", L"Équilibré", L"Performances",
@@ -93,7 +102,8 @@ inline constexpr MenuText menu_text[] = {
       L"Modèle standard pour DLAA, Qualité et Équilibré. Charge GPU inférieure à M et L.",
       L"Optimisé pour le mode Performances. Charge GPU accrue sur RTX 20 et 30.",
       L"Optimisé pour Ultra performances en 4K. Charge GPU accrue sur RTX 20 et 30."},
-     L"Échelle cible du SDK : "},
+     L"Échelle cible du SDK : ", L"Netteté",
+     L"Règle la netteté de l’image après la reconstruction temporelle. À 0 %, l’accentuation supplémentaire est désactivée."},
     {L"it", L"Antialiasing", L"Usa il TAA del gioco oppure l’antialiasing e l’upscaling di DLSS, FSR o XeSS.",
      L"TAA originale", L"Modalità qualità", L"L’AA nativo usa la risoluzione completa. Le altre modalità possono migliorare le prestazioni.",
      L"AA nativo", L"Qualità ultra+", L"Qualità ultra", L"Qualità", L"Bilanciato", L"Prestazioni",
@@ -103,7 +113,8 @@ inline constexpr MenuText menu_text[] = {
       L"Standard per DLAA, Qualità e Bilanciato. Carico GPU inferiore a M e L.",
       L"Ottimizzato per Prestazioni. Carico GPU maggiore su RTX serie 20 e 30.",
       L"Ottimizzato per Ultra prestazioni in 4K. Carico GPU maggiore su RTX serie 20 e 30."},
-     L"Scala obiettivo dell’SDK: "},
+     L"Scala obiettivo dell’SDK: ", L"Nitidezza",
+     L"Regola la nitidezza dell’immagine dopo la ricostruzione temporale. Imposta 0% per disattivare la nitidezza aggiuntiva."},
     {L"de", L"Kantenglättung", L"Verwendet das TAA des Spiels oder Kantenglättung und Hochskalierung mit DLSS, FSR oder XeSS.",
      L"Original-TAA", L"Qualitätsmodus", L"Native Kantenglättung nutzt die volle Auflösung. Andere Modi können die Leistung verbessern.",
      L"Natives AA", L"Ultraqualität+", L"Ultraqualität", L"Qualität", L"Ausgewogen", L"Leistung",
@@ -113,7 +124,8 @@ inline constexpr MenuText menu_text[] = {
       L"Standard für DLAA, Qualität und Ausgewogen. Geringere GPU-Last als M und L.",
       L"Für Leistung optimiert. Höhere GPU-Last auf RTX 20 und 30.",
       L"Für Ultra-Leistung in 4K optimiert. Höhere GPU-Last auf RTX 20 und 30."},
-     L"SDK-Zielskalierung: "},
+     L"SDK-Zielskalierung: ", L"Schärfe",
+     L"Passt die Bildschärfe nach der temporalen Rekonstruktion an. Bei 0 % ist die zusätzliche Schärfung deaktiviert."},
     {L"es", L"Suavizado de bordes", L"Usa el TAA del juego o el suavizado y escalado de DLSS, FSR o XeSS.",
      L"TAA original", L"Modo de calidad", L"El AA nativo usa la resolución completa. Los otros modos pueden mejorar el rendimiento.",
      L"AA nativo", L"Calidad ultra+", L"Calidad ultra", L"Calidad", L"Equilibrado", L"Rendimiento",
@@ -123,7 +135,8 @@ inline constexpr MenuText menu_text[] = {
       L"Estándar para DLAA, Calidad y Equilibrado. Menor carga gráfica que M y L.",
       L"Optimizado para Rendimiento. Mayor carga gráfica en RTX 20 y 30.",
       L"Optimizado para Rendimiento ultra en 4K. Mayor carga gráfica en RTX 20 y 30."},
-     L"Escala objetivo del SDK: "},
+     L"Escala objetivo del SDK: ", L"Nitidez",
+     L"Ajusta la nitidez de la imagen tras la reconstrucción temporal. Con el 0 % se desactiva el realce de nitidez adicional."},
     {L"pt", L"Antisserrilhamento", L"Use o TAA do jogo ou o antisserrilhamento e a super-resolução do DLSS, FSR ou XeSS.",
      L"TAA original", L"Modo de qualidade", L"O AA nativo usa a resolução completa. Os outros modos podem melhorar o desempenho.",
      L"AA nativo", L"Qualidade ultra+", L"Qualidade ultra", L"Qualidade", L"Equilibrado", L"Desempenho",
@@ -133,7 +146,8 @@ inline constexpr MenuText menu_text[] = {
       L"Padrão para DLAA, Qualidade e Equilibrado. Menor carga na GPU que M e L.",
       L"Otimizado para Desempenho. Maior carga na GPU nas séries RTX 20 e 30.",
       L"Otimizado para Ultra desempenho em 4K. Maior carga nas séries RTX 20 e 30."},
-     L"Escala alvo do SDK: "},
+     L"Escala alvo do SDK: ", L"Nitidez",
+     L"Ajusta a nitidez da imagem após a reconstrução temporal. Use 0% para desativar a nitidez adicional."},
     {L"pl", L"Technologia wygładzania", L"Użyj TAA gry albo wygładzania i skalowania DLSS, FSR lub XeSS.",
      L"Oryginalne TAA", L"Tryb jakości", L"Natywne AA działa w pełnej rozdzielczości. Pozostałe tryby mogą zwiększyć wydajność.",
      L"Natywne AA", L"Jakość ultra+", L"Jakość ultra", L"Jakość", L"Zrównoważony", L"Wydajność",
@@ -143,7 +157,8 @@ inline constexpr MenuText menu_text[] = {
       L"Standard dla DLAA, Jakości i trybu zrównoważonego. Mniej obciąża GPU niż M i L.",
       L"Zoptymalizowany pod kątem wydajności. Większe obciążenie kart RTX 20 i 30.",
       L"Dla ultrawydajności w 4K. Większe obciążenie kart RTX 20 i 30."},
-     L"Docelowa skala SDK: "},
+     L"Docelowa skala SDK: ", L"Ostrość",
+     L"Dostosowuje ostrość obrazu po rekonstrukcji czasowej. Ustawienie 0% wyłącza dodatkowe wyostrzanie."},
     {L"tr", L"Kenar yumuşatma", L"Oyunun TAA yöntemini veya DLSS, FSR ya da XeSS ile kenar yumuşatma ve ölçeklendirmeyi kullan.",
      L"Orijinal TAA", L"Kalite modu", L"Yerel AA tam çözünürlüğü kullanır. Diğer modlar performansı artırabilir.",
      L"Yerel AA", L"Ultra kalite+", L"Ultra kalite", L"Kalite", L"Dengeli", L"Performans",
@@ -153,7 +168,8 @@ inline constexpr MenuText menu_text[] = {
       L"DLAA, Kalite ve Dengeli modları için standart. M ve L'den daha az GPU yükü.",
       L"Performans için optimize edildi. RTX 20 ve 30 serisinde GPU yükü artar.",
       L"4K Ultra Performans için optimize edildi. RTX 20 ve 30 serisinde GPU yükü artar."},
-     L"SDK hedef ölçeği: "},
+     L"SDK hedef ölçeği: ", L"Keskinlik",
+     L"Zamansal yeniden oluşturma sonrası görüntü keskinliğini ayarlar. Ek keskinleştirmeyi kapatmak için %0 seçin."},
 };
 
 constexpr wchar_t LanguageChar(wchar_t c) {
@@ -181,6 +197,14 @@ constexpr const MenuText& LocalizedMenu(std::wstring_view language) {
     return menu_text[0];
 }
 
+inline std::wstring FormatSharpnessValue(int percent, const MenuText& text) {
+    auto number = std::to_wstring(percent);
+    if (text.language == L"tr") return L"%" + number;
+    if (text.language == L"de" || text.language == L"es" || text.language == L"fr")
+        return number + L" %";
+    return number + L"%";
+}
+
 constexpr bool ValidMenuText(const wchar_t* text) {
     if (!text || !*text) return false;
     for (size_t i = 0; text[i]; ++i) {
@@ -205,7 +229,7 @@ constexpr bool CompleteMenuTranslations() {
         if (&LocalizedMenu(supported[i]) != &text) return false;
         const wchar_t* fields[]{text.technology, text.technology_help, text.original, text.quality,
             text.quality_help, text.native, text.ultra_plus, text.ultra, text.quality_value, text.balanced,
-            text.performance, text.model, text.scale_target};
+            text.performance, text.model, text.scale_target, text.sharpness, text.sharpness_help};
         for (auto* field : fields)
             if (!ValidMenuText(field)) return false;
         constexpr std::wstring_view suffixes[]{L"", L"(K)", L"(M)", L"(L)"};

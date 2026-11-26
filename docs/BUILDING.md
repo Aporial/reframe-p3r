@@ -30,9 +30,11 @@ The script downloads from those revisions into `.deps`. It verifies each SHA-256
 powershell -NoProfile -File build.ps1
 ```
 
-The build uses FXC to compile `shaders/motion_vectors.hlsl` as `cs_5_0` and writes the bytecode header into the build directory. RC compiles DLL metadata from `include/reframe/version.h`. MSVC builds optimized x64 code with `/O2` and `/MT` and links MinHook and the NGX static loader. The result is `build\Release\d3d12.dll`. To put intermediates and the DLL outside the checkout, pass `-BuildDirectory`.
+The build uses FXC to compile `shaders/motion_vectors.hlsl` and `shaders/sharpness.hlsl` as `cs_5_0` and writes the bytecode headers into the build directory. RC compiles DLL metadata from `include/reframe/version.h`. MSVC builds optimized x64 code with `/O2` and `/MT` and links MinHook and the NGX static loader. The result is `build\Release\d3d12.dll`. To put intermediates and the DLL outside the checkout, pass `-BuildDirectory`.
 
-The optional `-GpuSmokeTest` switch compiles a developer-only fixture in `tests`. It never runs it. Omit the switch for a release.
+The optional `-GpuSmokeTest` switch builds `gpu_smoke.exe`. Pass `dlss`, `fsr` or `xess`, a directory containing the pinned runtime DLLs, and a quality index. Add `--sharpness` at the end to run CAS after the SDK dispatch. The switch compiles the fixture without running it.
+
+`-SharpnessTests` builds `sharpness_tests.exe`. Run it without arguments for the CPU checks. Use `--warp` for software D3D12 or `--hardware` for the high-performance adapter. The GPU fixture reports the isolated CAS and copy time, CPU recording overhead, and scratch allocation at common output sizes.
 
 ## Release ZIP
 
@@ -40,6 +42,8 @@ The optional `-GpuSmokeTest` switch compiles a developer-only fixture in `tests`
 powershell -NoProfile -File scripts\New-Release.ps1
 ```
 
-The script stages an allowlisted payload, writes a hash manifest and generates `dist\REFRAME-P3R-v1.0.0.zip` and `dist\REFRAME-P3R-v1.0.0.zip.sha256`. The archive starts at `P3R\Binaries\Win64`. Pass the same `-BuildDirectory` and `-DependencyRoot` overrides if you used them to build. To build a fresh package when a stage already exists, use a new `-OutputDirectory`.
+The script stages an allowlisted payload, writes a hash manifest and generates `dist\REFRAME-P3R-v1.1.0.zip` and `dist\REFRAME-P3R-v1.1.0.zip.sha256`. The archive starts at `P3R\Binaries\Win64`. Pass the same `-BuildDirectory` and `-DependencyRoot` overrides if you used them to build. To build a fresh package when a stage already exists, use a new `-OutputDirectory`.
 
 The ZIP includes the project’s [MIT License](../LICENSE) and separate vendor notices. Review the [third-party notices](../THIRD_PARTY_NOTICES.md) before distributing the result.
+
+Run `tests\release_package.ps1 -Archive dist\REFRAME-P3R-v1.1.0.zip` to verify the archive checksum, localized guides, manifest and uninstaller against disposable fixtures in the build directory.

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.0 — Sharpness Update
+
+- Added a shared Sharpness control for DLAA, DLSS, FSR, and XeSS, including Native AA modes. The native Graphics menu offers 0% to 100% in 5% increments and 13 languages.
+- Added an optional FidelityFX CAS-based D3D12 pass after successful temporal reconstruction and before game composition. At 0% the renderer bypasses the pass. If the pass cannot record, composition receives the reconstructed frame.
+- Sharpness applies through the existing settings transaction and persists in `ReFrame/Settings.ini`. Changes to Sharpness alone leave temporal feature identity and history intact.
+- CAS reuses bindings after their command lists and fences retire. The frame cadence log shows how many frames received CAS.
+- Added offline regressions and verified Sharpness in-game with DLSS, FSR, and XeSS Performance at 1080p on an RTX 5060. [Test coverage](docs/COMPATIBILITY.md)
+- Included localized release and installation guides in the ZIP. The uninstaller accepts the 1.1.0 manifest and verifies each packaged file before removal. [Release and installation guide](docs/INSTALLATION.md)
+
 ## 1.0.0
 
 First public release candidate for Persona 3 Reload. The project is now **RE:FRAME — Persona 3 Reload**, by Aporia.

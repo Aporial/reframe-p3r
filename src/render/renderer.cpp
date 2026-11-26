@@ -4,6 +4,7 @@
 #include "ngp.hpp"
 #include "vendor_backends.hpp"
 #include "temporal_settings.hpp"
+#include "sharpness.hpp"
 #include "motion_cs.h"
 #include <dxgi1_6.h>
 #include <wrl/client.h>
@@ -16,7 +17,7 @@
 #include <memory>
 #include <mutex>
 #include <numeric>
-#include <unordered_set>
+#include <unordered_map>
 #include <vector>
 
 using Microsoft::WRL::ComPtr;
@@ -47,19 +48,20 @@ struct FrameStatistics {
     Size render, display;
     std::array<float, 240> milliseconds{};
     size_t count = 0;
+    size_t sharpened_count = 0;
 
-    void Record(Settings current, Size input, Size output, Clock::time_point now);
+    void Record(Settings current, Size input, Size output, Clock::time_point now, bool sharpened = false);
 };
 
 struct Plan {
-    Settings settings;
+    TemporalSelection settings{};
     Size display;
     RenderRecommendation recommendation;
     float percentage = 100;
 };
 
 struct ConfiguredFeature {
-    Settings settings;
+    TemporalSelection settings{};
     Size render, display;
     bool operator==(const ConfiguredFeature&) const = default;
 };
@@ -68,6 +70,7 @@ struct QueueProgress {
     ComPtr<ID3D12CommandQueue> queue;
     ComPtr<ID3D12Fence> fence;
     UINT64 last_signal = 0;
+    std::array<UINT64, SharpnessPass::target_count> sharpness_signals{};
 };
 
 struct MainView {
@@ -87,10 +90,13 @@ struct Runtime {
     DlssSession dlss;
     FsrApi fsr;
     XessApi xess;
+    SharpnessPass sharpness_pass;
+    uint32_t reported_sharpness_failures = 0;
+    bool reported_sharpness_dispatch = false;
     Plan plan;
     ConfiguredFeature feature;
     std::vector<QueueProgress> queues;
-    std::unordered_set<ID3D12CommandList*> recorded;
+    std::unordered_map<ID3D12CommandList*, uint32_t> recorded;
     unsigned submitting = 0;
     bool untracked_work = false;
     bool benchmark = false;
@@ -100,6 +106,8 @@ struct Runtime {
     Technology last_vendor = Technology::Taa;
     Quality quality = Quality::Native;
     Model model = Model::Auto;
+    int sharpness = 0;
+    int last_frame_sharpness = 0;
     Clock::time_point previous;
     TemporalSettings temporal;
     FrameStatistics stats;
@@ -112,6 +120,8 @@ struct Runtime {
     bool toggle_down = false;
     bool cycle_down = false;
     bool quality_down = false;
+
+    Settings Selection() const { return {active, quality, model, sharpness}; }
 };
 
 constexpr const char* Names[] = {"Original TAA", "NVIDIA DLSS", "AMD FSR", "Intel XeSS"};
@@ -119,21 +129,23 @@ constexpr size_t Slot(Technology technology) { return static_cast<size_t>(techno
 constexpr const char* QualityNames[] = {"Native AA", "Quality", "Balanced", "Performance", "Ultra Quality", "Ultra Quality Plus"};
 constexpr auto QualityCount = static_cast<size_t>(Quality::Count);
 
-const char* ModeName(Settings settings) {
+const char* ModeName(TemporalSelection settings) {
     if (settings.technology == Technology::Taa) return "Original";
     if (settings.technology == Technology::Dlss && settings.quality == Quality::Native) return "DLAA";
     return QualityNames[static_cast<size_t>(settings.quality)];
 }
 
-void FrameStatistics::Record(Settings current, Size input, Size output, Clock::time_point now) {
+void FrameStatistics::Record(Settings current, Size input, Size output, Clock::time_point now, bool sharpened) {
     const float elapsed = std::chrono::duration<float, std::milli>(now - previous).count();
     if (current != settings || render != input || display != output || previous == Clock::time_point{}) {
         count = 0;
+        sharpened_count = 0;
         settings = current;
         render = input;
         display = output;
     } else if (elapsed > 0) {
         milliseconds[count++] = elapsed;
+        sharpened_count += sharpened;
     }
     previous = now;
     if (count != milliseconds.size()) return;
@@ -144,16 +156,17 @@ void FrameStatistics::Record(Settings current, Size input, Size output, Clock::t
     const float slow_mean = std::accumulate(milliseconds.end() - slow_count, milliseconds.end(), 0.0f) / slow_count;
     DXGI_QUERY_VIDEO_MEMORY_INFO memory{};
     if (adapter && SUCCEEDED(adapter->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &memory))) {
-        Log("Main-view cadence [%s / %s %ux%u -> %ux%u], %zu frames: %.1f FPS, %.1f 1%% low, %.2f ms mean, %.2f ms p95, process VRAM %.1f MiB / %.1f MiB budget.",
-            Names[Slot(current.technology)], ModeName(current), input.width, input.height, output.width, output.height,
-            count, 1000.0f / mean, 1000.0f / slow_mean, mean, p95,
+        Log("Main-view cadence [%s / %s %ux%u -> %ux%u, Sharpness %d%%], %zu frames (%zu CAS): %.1f FPS, %.1f 1%% low, %.2f ms mean, %.2f ms p95, process VRAM %.1f MiB / %.1f MiB budget.",
+            Names[Slot(current.technology)], ModeName(current.Temporal()), input.width, input.height, output.width, output.height, current.sharpness,
+            count, sharpened_count, 1000.0f / mean, 1000.0f / slow_mean, mean, p95,
             memory.CurrentUsage / 1048576.0, memory.Budget / 1048576.0);
     } else {
-        Log("Main-view cadence [%s / %s %ux%u -> %ux%u], %zu frames: %.1f FPS, %.1f 1%% low, %.2f ms mean, %.2f ms p95.",
-            Names[Slot(current.technology)], ModeName(current), input.width, input.height, output.width, output.height,
-            count, 1000.0f / mean, 1000.0f / slow_mean, mean, p95);
+        Log("Main-view cadence [%s / %s %ux%u -> %ux%u, Sharpness %d%%], %zu frames (%zu CAS): %.1f FPS, %.1f 1%% low, %.2f ms mean, %.2f ms p95.",
+            Names[Slot(current.technology)], ModeName(current.Temporal()), input.width, input.height, output.width, output.height, current.sharpness,
+            count, sharpened_count, 1000.0f / mean, 1000.0f / slow_mean, mean, p95);
     }
     count = 0;
+    sharpened_count = 0;
 }
 
 Runtime& App() {
@@ -304,13 +317,17 @@ void RecordMotion(Runtime& app, MotionPass& pass, ID3D12GraphicsCommandList* lis
     game.frame.exposure = pass.exposure.Get();
 }
 
+void PersistSelection(const Runtime& app) {
+    if (!SaveGraphicsConfig(DataDirectory(), app.Selection(), app.last_vendor))
+        Log("Failed to save graphics settings.");
+}
+
 void SaveSelection(Runtime& app) {
     app.previous = {};
     app.frames = 0;
     app.waiting_frames = 0;
-    if (!SaveGraphicsConfig({app.active, app.quality, app.model}, app.last_vendor))
-        Log("Failed to save graphics settings.");
-    Log("Selected %s / %s.", Names[Slot(app.active)], ModeName({app.active, app.quality, app.model}));
+    PersistSelection(app);
+    Log("Selected %s / %s.", Names[Slot(app.active)], ModeName(app.Selection().Temporal()));
 }
 
 void SetTechnology(Runtime& app, Technology tech) {
@@ -425,12 +442,38 @@ bool FinishedGpuWork(const Runtime& app) {
     return true;
 }
 
+uint32_t ReusableSharpnessTargets(const Runtime& app) {
+    if (app.untracked_work || app.submitting) return 0;
+    uint32_t busy = 0;
+    for (const auto& [list, targets] : app.recorded) busy |= targets;
+    for (const auto& queue : app.queues) {
+        const auto completed = queue.fence->GetCompletedValue();
+        if (completed == UINT64_MAX) return 0;
+        for (UINT i = 0; i < queue.sharpness_signals.size(); ++i)
+            if (queue.sharpness_signals[i] > completed) busy |= 1u << i;
+    }
+    return ((1u << SharpnessPass::target_count) - 1u) & ~busy;
+}
+
+const char* SharpnessStatusReason(SharpnessPass::Status status) {
+    switch (status) {
+    case SharpnessPass::Status::Unsupported: return "unsupported output or exposure";
+    case SharpnessPass::Status::PipelineFailed: return "pipeline initialization failed";
+    case SharpnessPass::Status::AllocationFailed: return "scratch binding failed";
+    case SharpnessPass::Status::TargetsBusy: return "all scratch bindings still in use";
+    default: return "unknown";
+    }
+}
+
 bool ReleaseFeature(Runtime& app) {
     if (!app.feature.display.width) return true;
     if (!FinishedGpuWork(app)) return false;
     app.dlss.ReleaseFeature();
     app.fsr.ReleaseFeature();
     app.xess.ReleaseFeature();
+    app.sharpness_pass.ClearTargets();
+    app.reported_sharpness_failures = 0;
+    app.reported_sharpness_dispatch = false;
     app.bindings.clear();
     app.passes.clear();
     app.feature = {};
@@ -464,7 +507,7 @@ MenuGraphicsSelection ReadMenuGraphics() {
     std::lock_guard lock(app.mutex);
     auto available = app.available;
     available[Slot(Technology::Taa)] = true;
-    return {{app.active, app.quality, app.model}, available, MenuDisplay(app)};
+    return {app.Selection(), available, MenuDisplay(app)};
 }
 
 RenderRecommendation RecommendMenuQuality(Technology technology, Quality quality, Size output) {
@@ -481,6 +524,15 @@ bool ApplyMenuGraphics(Settings settings) {
     const auto i = Slot(settings.technology);
     if (i >= app.available.size() || (settings.technology != Technology::Taa && !app.available[i]) ||
         settings.quality >= Quality::Count || settings.model > Model::L) return false;
+    settings.sharpness = NormalizeSharpness(settings.sharpness);
+    const auto current = app.Selection();
+    if (settings.Temporal() == current.Temporal()) {
+        if (settings.sharpness != current.sharpness) {
+            app.sharpness = settings.sharpness;
+            PersistSelection(app);
+        }
+        return true;
+    }
     if (settings.technology == Technology::Taa) {
         app.temporal.RestoreScreenPercentage();
     } else {
@@ -500,6 +552,7 @@ bool ApplyMenuGraphics(Settings settings) {
     const bool mode_changed = app.quality != settings.quality || app.model != settings.model;
     app.quality = settings.quality;
     app.model = settings.model;
+    app.sharpness = settings.sharpness;
     if (app.active != settings.technology) SetTechnology(app, settings.technology);
     else if (mode_changed) SaveSelection(app);
     return true;
@@ -519,18 +572,22 @@ void ObserveUpscaleQueue(ID3D12CommandQueue* queue) noexcept {
     } catch (...) { Log("Unable to track a direct queue."); }
 }
 
-bool BeginUpscaleSubmission(UINT count, ID3D12CommandList* const* lists) noexcept {
+UpscaleSubmission BeginUpscaleSubmission(UINT count, ID3D12CommandList* const* lists) noexcept {
     auto& app = App();
     std::lock_guard lock(app.mutex);
+    UpscaleSubmission submission;
     for (UINT i = 0; i < count; ++i) {
-        if (!app.recorded.contains(lists[i])) continue;
-        ++app.submitting;
-        return true;
+        const auto record = app.recorded.find(lists[i]);
+        if (record == app.recorded.end()) continue;
+        submission.tracked = true;
+        submission.sharpness_targets |= record->second;
+        if (!app.sharpness_pass.AllocatedBytes()) break;
     }
-    return false;
+    if (submission.tracked) ++app.submitting;
+    return submission;
 }
 
-void EndUpscaleSubmission(ID3D12CommandQueue* queue) noexcept {
+void EndUpscaleSubmission(ID3D12CommandQueue* queue, UpscaleSubmission submission) noexcept {
     auto& app = App();
     std::lock_guard lock(app.mutex);
     // A list may be reset as soon as the underlying ExecuteCommandLists returns.
@@ -538,8 +595,11 @@ void EndUpscaleSubmission(ID3D12CommandQueue* queue) noexcept {
     --app.submitting;
     for (auto& q : app.queues) {
         if (q.queue.Get() != queue) continue;
-        if (SUCCEEDED(queue->Signal(q.fence.Get(), ++q.last_signal))) return;
-        break;
+        if (FAILED(queue->Signal(q.fence.Get(), ++q.last_signal))) break;
+        if (submission.sharpness_targets)
+            for (UINT i = 0; i < q.sharpness_signals.size(); ++i)
+                if (submission.sharpness_targets & (1u << i)) q.sharpness_signals[i] = q.last_signal;
+        return;
     }
     if (!app.untracked_work) Log("SDK work could not be fenced; preserving Original TAA until restart.");
     app.untracked_work = true;
@@ -578,15 +638,16 @@ bool InitializeUpscalers(ID3D12Device* device) {
     ComPtr<IDXGIFactory4> factory;
     if (SUCCEEDED(CreateDXGIFactory1(IID_PPV_ARGS(&factory))))
         factory->EnumAdapterByLuid(device->GetAdapterLuid(), IID_PPV_ARGS(&app.stats.adapter));
-    const auto config = LoadGraphicsConfig(app.available, app.last_vendor);
+    const auto config = LoadGraphicsConfig(directory, app.available, app.last_vendor);
     app.active = config.settings.technology;
     app.quality = config.settings.quality;
     app.model = config.settings.model;
+    app.sharpness = config.settings.sharpness;
     app.last_vendor = config.last_vendor;
     app.benchmark = BenchmarkEnabled();
     app.diagnostic_hotkeys = DiagnosticEnabled(L"Hotkeys");
     app.temporal.Benchmark(app.benchmark);
-    Log("Restored selection %s / %s.", Names[Slot(app.active)], ModeName({app.active, app.quality, app.model}));
+    Log("Restored selection %s / %s, Sharpness %d%%.", Names[Slot(app.active)], ModeName(app.Selection().Temporal()), app.sharpness);
     return true;
 }
 
@@ -612,7 +673,7 @@ bool RenderUpscaled(ID3D12GraphicsCommandList* list, GameFrame& game) {
         ReleaseFeature(app);
         return original(true);
     }
-    Settings settings{tech, app.quality, tech == Technology::Dlss ? app.model : Model::Auto};
+    TemporalSelection settings{tech, app.quality, tech == Technology::Dlss ? app.model : Model::Auto};
     if (app.plan.settings != settings || app.plan.display != output) {
         auto recommendation = Recommend(app, tech, settings.quality, output);
         if (!ValidTarget(recommendation.optimal, output, settings.quality) && settings.quality != Quality::Native) {
@@ -663,7 +724,7 @@ bool RenderUpscaled(ID3D12GraphicsCommandList* list, GameFrame& game) {
         bool ready = false;
         switch (tech) {
         case Technology::Dlss:
-            app.recorded.insert(list);
+            app.recorded.try_emplace(list, 0);
             ready = app.dlss.Create(list, settings, frame.render, frame.display);
             break;
         case Technology::Fsr: ready = app.fsr.Create(frame.render, frame.display); break;
@@ -689,7 +750,7 @@ bool RenderUpscaled(ID3D12GraphicsCommandList* list, GameFrame& game) {
         std::chrono::duration<float, std::milli>(now - app.previous).count();
     const bool changed_projection = app.last_phases != game.jitter_phases || app.last_mip_bias != game.mip_bias;
     frame.reset |= first || changed_settings || changed_projection || frame.frame_time_ms > 200.0f;
-    app.recorded.insert(list);
+    auto& used_targets = app.recorded.try_emplace(list, 0).first->second;
     RecordMotion(app, *motion, list, game, bindings);
     bool rendered = false;
     switch (tech) {
@@ -704,17 +765,51 @@ bool RenderUpscaled(ID3D12GraphicsCommandList* list, GameFrame& game) {
         Log("%s failed; using Original TAA.", Names[slot]);
         return original(true);
     }
+    const bool changed_sharpness = app.last_frame_sharpness != app.sharpness;
+    if (changed_sharpness) {
+        app.reported_sharpness_failures = 0;
+        app.reported_sharpness_dispatch = false;
+    }
+    bool sharpened = false;
+    if (app.sharpness > 0) {
+        const auto record = [&](uint32_t reusable) {
+            return app.sharpness_pass.Record(app.device.Get(), list, frame.output, game.output_format,
+                                              frame.display, frame.pre_exposure, app.sharpness, reusable);
+        };
+        auto result = record(0);
+        if (result.status == SharpnessPass::Status::TargetsBusy) {
+            if (const auto reusable = ReusableSharpnessTargets(app)) result = record(reusable);
+        }
+        if (result.Succeeded()) {
+            used_targets |= result.target;
+            sharpened = true;
+            if (!app.reported_sharpness_dispatch) {
+                Log("CAS recorded at %d%% on %ux%u, scene pre-exposure %.4f.",
+                    app.sharpness, frame.display.width, frame.display.height, frame.pre_exposure);
+                app.reported_sharpness_dispatch = true;
+            }
+        } else {
+            const uint32_t reason = 1u << static_cast<unsigned>(result.status);
+            if (!(app.reported_sharpness_failures & reason)) {
+                Log("CAS skipped (%s), %ux%u format %u. Using the reconstructed image.",
+                    SharpnessStatusReason(result.status), frame.display.width, frame.display.height,
+                    static_cast<unsigned>(game.output_format));
+                app.reported_sharpness_failures |= reason;
+            }
+        }
+    }
 
     app.previous = now;
     app.last_phases = game.jitter_phases;
     app.last_mip_bias = game.mip_bias;
-    app.stats.Record(settings, frame.render, output, now);
-    if (++app.frames == 1 || changed_projection || app.frames % 1800 == 0)
-        Log("%s / %s evaluated %u frames, render %ux%u (allocated %ux%u), output %ux%u (allocated %ux%u), jitter %+.3f %+.3f, phase %u/%u, mip bias %.3f, reset %d.",
+    app.stats.Record({settings.technology, settings.quality, settings.model, app.sharpness}, frame.render, output, now, sharpened);
+    app.last_frame_sharpness = app.sharpness;
+    if (++app.frames == 1 || changed_projection || changed_sharpness || app.frames % 1800 == 0)
+        Log("%s / %s evaluated %u frames, render %ux%u (allocated %ux%u), output %ux%u (allocated %ux%u), jitter %+.3f %+.3f, phase %u/%u, mip bias %.3f, reset %d, Sharpness %d%%.",
             Names[slot], ModeName(settings), app.frames, frame.render.width, frame.render.height,
             game.color_allocation.width, game.color_allocation.height, output.width, output.height,
             game.output_allocation.width, game.output_allocation.height,
-            frame.jitter_x, frame.jitter_y, game.jitter_index, game.jitter_phases, game.mip_bias, frame.reset);
+            frame.jitter_x, frame.jitter_y, game.jitter_index, game.jitter_phases, game.mip_bias, frame.reset, app.sharpness);
     return true;
 }
 }

@@ -1,5 +1,6 @@
 #include "platform.hpp"
 #include "ngp.hpp"
+#include "sharpness.hpp"
 #include "vendor_backends.hpp"
 #include <dxgi1_6.h>
 #include <wrl/client.h>
@@ -44,6 +45,8 @@ void Transition(ID3D12GraphicsCommandList* list, ID3D12Resource* resource,
 }
 
 int wmain(int argc, wchar_t** argv) {
+    const bool test_sharpness = argc >= 4 && std::wstring_view(argv[argc - 1]) == L"--sharpness";
+    if (test_sharpness) --argc;
     if (argc < 3 || argc > 5) return 2;
     const auto name = std::wstring_view(argv[1]);
     if (name != L"dlss" && name != L"fsr" && name != L"xess") return 2;
@@ -141,6 +144,11 @@ int wmain(int argc, wchar_t** argv) {
         if (name == L"fsr") ok = fsr.Create(input, size) && fsr.Dispatch(list.Get(), frame);
         if (name == L"xess") ok = xess.Create(quality, size) && xess.Dispatch(list.Get(), frame);
         if (!ok) throw std::runtime_error("SDK initialization or recording failed");
+
+        SharpnessPass sharpness;
+        if (test_sharpness && !sharpness.Record(dev.Get(), list.Get(), frame.output, formats[3],
+                                               frame.display, frame.pre_exposure, 50).Succeeded())
+            throw std::runtime_error("Could not record CAS after the SDK");
 
         const auto output = textures[3]->GetDesc();
         D3D12_PLACED_SUBRESOURCE_FOOTPRINT footprint{};

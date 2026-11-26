@@ -2,7 +2,8 @@
 param(
     [string]$DependencyRoot = (Join-Path $PSScriptRoot '.deps'),
     [string]$BuildDirectory = (Join-Path $PSScriptRoot 'build/Release'),
-    [switch]$GpuSmokeTest
+    [switch]$GpuSmokeTest,
+    [switch]$SharpnessTests
 )
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
@@ -34,6 +35,8 @@ Push-Location -LiteralPath $out
 try {
     Invoke-Tool $fxc @('/nologo','/T','cs_5_0','/E','main','/O3','/Fh','motion_cs.h','/Vn','MotionCs',
                        (Join-Path $root 'shaders/motion_vectors.hlsl'))
+    Invoke-Tool $fxc @('/nologo','/T','cs_5_0','/E','main','/O3','/Fh','sharpness_cs.h','/Vn','SharpnessCs',
+                       (Join-Path $root 'shaders/sharpness.hlsl'))
     Invoke-Tool $rc @('/nologo',"/I$root/include/reframe",'/fo','version.res',(Join-Path $root 'src/core/version.rc'))
     $c = @('buffer.c','hook.c','trampoline.c','hde/hde64.c') | ForEach-Object { Join-Path $minHook "src/$_" }
     Invoke-Tool $cl (@('/nologo','/c','/O2','/MT','/W3',"/I$minHook/include") + $c)
@@ -49,9 +52,15 @@ try {
         @('/link',"/DEF:$root/src/d3d12/d3d12.def",'/MACHINE:X64','/OUT:d3d12.dll','/INCREMENTAL:NO'))
     if ($GpuSmokeTest) {
         $test = @('tests/gpu_smoke.cpp','src/core/platform.cpp','src/backends/ngp.cpp','src/backends/fsr.cpp',
-                  'src/backends/xess.cpp') | ForEach-Object { Join-Path $root $_ }
+                  'src/backends/xess.cpp','src/render/sharpness.cpp') | ForEach-Object { Join-Path $root $_ }
         Invoke-Tool $cl ($options + $includes + $test + $libraries +
             @('/link','/MACHINE:X64','/OUT:gpu_smoke.exe','/INCREMENTAL:NO'))
+    }
+    if ($SharpnessTests) {
+        $test = @('tests/sharpness_tests.cpp','src/config/settings.cpp','src/core/platform.cpp',
+                  'src/render/sharpness.cpp') | ForEach-Object { Join-Path $root $_ }
+        Invoke-Tool $cl ($options + $includes + $test + @('dxgi.lib','dxguid.lib',
+            '/link','/MACHINE:X64','/OUT:sharpness_tests.exe','/INCREMENTAL:NO'))
     }
 } finally {
     Pop-Location

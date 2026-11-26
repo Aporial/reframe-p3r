@@ -23,7 +23,7 @@ void NVSDK_CONV NgxLog(const char* message, NVSDK_NGX_Logging_Level, NVSDK_NGX_F
     if (message && (strstr(message, "error") || strstr(message, "Error"))) Log("NGX: %s", message);
 }
 
-Preset PresetFor(Settings settings) {
+Preset PresetFor(TemporalSelection settings) {
     switch (settings.model) {
     case Model::K: return NVSDK_NGX_DLSS_Hint_Render_Preset_K;
     case Model::M: return NVSDK_NGX_DLSS_Hint_Render_Preset_M;
@@ -87,7 +87,7 @@ RenderRecommendation DlssSession::Recommend(Quality quality, Size output) const 
     return NVSDK_NGX_SUCCEED(status) ? result : RenderRecommendation{};
 }
 
-bool DlssSession::Create(ID3D12GraphicsCommandList* cmd, Settings settings, Size render, Size display) {
+bool DlssSession::Create(ID3D12GraphicsCommandList* cmd, TemporalSelection settings, Size render, Size display) {
     if (!parameters_ || feature_ || static_cast<size_t>(settings.quality) >= std::size(modes)) return false;
     const auto& mode = modes[static_cast<std::size_t>(settings.quality)];
     const auto preset = PresetFor(settings);
@@ -98,6 +98,7 @@ bool DlssSession::Create(ID3D12GraphicsCommandList* cmd, Settings settings, Size
     params.Feature.InTargetWidth = display.width;
     params.Feature.InTargetHeight = display.height;
     params.Feature.InPerfQualityValue = mode.quality;
+    // Leave the deprecated optional NGX sharpening flag disabled.
     params.InFeatureCreateFlags = NVSDK_NGX_DLSS_Feature_Flags_IsHDR |
         NVSDK_NGX_DLSS_Feature_Flags_MVLowRes | NVSDK_NGX_DLSS_Feature_Flags_DepthInverted;
     const auto result = NGX_D3D12_CREATE_DLSS_EXT(cmd, 1, 1, &feature_, parameters_, &params);

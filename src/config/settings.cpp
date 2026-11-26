@@ -1,9 +1,24 @@
 #include "settings.hpp"
 #include "platform.hpp"
+#include <cwchar>
 
 namespace reframe {
-GraphicsConfig LoadGraphicsConfig(const std::array<bool, 4>& available, Technology default_vendor) {
-    const auto& directory = DataDirectory();
+namespace {
+int ReadSharpness(const std::filesystem::path& file) {
+    wchar_t value[64]{};
+    const auto length = GetPrivateProfileStringW(L"Graphics", L"Sharpness", L"0", value,
+                                                  static_cast<DWORD>(std::size(value)), file.c_str());
+    if (length >= std::size(value) - 1) return 0;
+    wchar_t* end = nullptr;
+    const long parsed = std::wcstol(value, &end, 10);
+    if (end == value) return 0;
+    while (*end == L' ' || *end == L'\t') ++end;
+    return *end ? 0 : NormalizeSharpness(static_cast<int>(parsed));
+}
+}
+
+GraphicsConfig LoadGraphicsConfig(const std::filesystem::path& directory, const std::array<bool, 4>& available,
+                                  Technology default_vendor) {
     auto file = directory / L"Settings.ini";
     if (!std::filesystem::exists(file))
         file = directory.parent_path() / L"P3RGraphicsEnhanced" / L"Settings.ini";
@@ -22,18 +37,19 @@ GraphicsConfig LoadGraphicsConfig(const std::array<bool, 4>& available, Technolo
     if (quality < static_cast<UINT>(Quality::Count)) config.settings.quality = static_cast<Quality>(quality);
     const auto model = read(L"Model", 0);
     if (model <= static_cast<UINT>(Model::L)) config.settings.model = static_cast<Model>(model);
+    config.settings.sharpness = ReadSharpness(file);
     return config;
 }
 
-bool SaveGraphicsConfig(Settings settings, Technology last_vendor) {
-    const auto& directory = DataDirectory();
+bool SaveGraphicsConfig(const std::filesystem::path& directory, Settings settings, Technology last_vendor) {
     if (directory.empty()) return false;
     const auto file = directory / L"Settings.ini";
     const auto write = [&](const wchar_t* key, auto value) {
         return WritePrivateProfileStringW(L"Graphics", key, std::to_wstring(static_cast<UINT>(value)).c_str(), file.c_str());
     };
     return (write(L"Technology", settings.technology) & write(L"LastBackend", last_vendor) &
-            write(L"Quality", settings.quality) & write(L"Model", settings.model)) != 0;
+            write(L"Quality", settings.quality) & write(L"Model", settings.model) &
+            write(L"Sharpness", NormalizeSharpness(settings.sharpness))) != 0;
 }
 
 bool DiagnosticEnabled(const wchar_t* key) {

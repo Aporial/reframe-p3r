@@ -18,3 +18,5 @@ Get-ChildItem -LiteralPath 'docs/i18n' -Filter 'README.*.md' -File |
 The command prints nothing when all revision markers match. After an English edit, review each listed translation against the new source. If you need the old English text, run `git show <old-blob-id>` in a clone that contains the old revision. Translate the changed sections, check links and headings, and replace the comment's ID with the output of `git hash-object --path=README.md README.md` once the translation is current.
 
 Use the menu's existing localized labels where known. Preserve technology names, commands, paths, release details, and the distinction between earlier in-game testing and the current release's verification. Keep translated READMEs and their links in UTF-8.
+
+[Installation](../INSTALLATION.md) is the source for the localized `INSTALLATION.<locale>.md` guides. They cover the release changes, setup, removal and a short verification procedure. The release ZIP includes these guides, and [the GitHub release text](../GITHUB_RELEASE.md) links to them. Ukrainian is available for documentation. In-game language selection follows Persona 3 Reload's supported locales.

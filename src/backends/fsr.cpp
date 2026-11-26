@@ -137,6 +137,7 @@ bool FsrApi::Dispatch(ID3D12GraphicsCommandList* list, const Frame& frame) {
     params.upscaleSize = {frame.display.width, frame.display.height};
     params.frameTimeDelta = frame.frame_time_ms;
     params.preExposure = frame.pre_exposure;
+    params.enableSharpening = false;
     params.reset = frame.reset;
     params.cameraNear = frame.camera_near;
     params.cameraFar = FLT_MAX;

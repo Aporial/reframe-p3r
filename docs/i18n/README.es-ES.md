@@ -2,13 +2,13 @@
 
 [English](../../README.md) · [Français](README.fr-FR.md) · [Italiano](README.it-IT.md) · [Deutsch](README.de-DE.md) · **[Español (España)](README.es-ES.md)** · [日本語](README.ja-JP.md) · [한국어](README.ko-KR.md) · [Polski](README.pl-PL.md) · [Português (Brasil)](README.pt-BR.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [Türkçe](README.tr-TR.md) · [Українська](README.uk-UA.md)
 
-<!-- source-readme: 834e57d57f2b49f6b6c8540a9c22bb0042aa92a7 -->
+<!-- source-readme: d635567e66ae8b9728ea8b204baf8079bd1c8590 -->
 
-![Versión 1.0.0](https://img.shields.io/badge/release-1.0.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![Licencia MIT](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+![Versión 1.1.0](https://img.shields.io/badge/release-1.1.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![Licencia MIT](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 Suaviza los bordes dentados y reduce el parpadeo en **Persona 3 Reload** sin subir la escala de renderizado al 200 %. DLAA y el AA nativo de FSR o XeSS mejoran los contornos a la resolución de tu pantalla. Para ganar fluidez, prueba uno de los modos de escalado.
 
-**[Descargar RE:FRAME v1.0.0](https://github.com/Aporial/reframe-p3r/releases/latest)**
+**[Versiones publicadas de RE:FRAME](https://github.com/Aporial/reframe-p3r/releases/latest)**
 
 ![Menú de gráficos de Persona 3 Reload con los ajustes de RE:FRAME](../images/settings.png)
 
@@ -16,7 +16,7 @@ Suaviza los bordes dentados y reduce el parpadeo en **Persona 3 Reload** sin sub
 
 ## Instalación
 
-1. Cierra el juego y descarga **REFRAME-P3R-v1.0.0.zip** desde [Versiones de GitHub](https://github.com/Aporial/reframe-p3r/releases/latest).
+1. Cierra el juego y descarga **REFRAME-P3R-v1.1.0.zip** de [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest).
 2. En Steam, haz clic derecho en **Persona 3 Reload** y selecciona **Propiedades → Archivos instalados → Explorar**.
 3. Extrae el ZIP en la carpeta que ya contiene `P3R`. El archivo coloca `d3d12.dll` junto a `P3R.exe` en `P3R\Binaries\Win64`.
 4. Inicia el juego desde Steam como de costumbre.
@@ -29,7 +29,7 @@ El ZIP incluye el mod y sus bibliotecas gráficas. Puedes configurarlo desde el 
 ### Actualizar y desinstalar
 
 - **Actualizar** · Cierra el juego, ejecuta el desinstalador de la versión anterior y extrae el nuevo ZIP. Si quieres conservar los ajustes de una versión de desarrollo, mantén `P3RGraphicsEnhanced\Settings.ini` hasta que RE:FRAME guarde en `ReFrame\Settings.ini`.
-- **Desinstalar** · Cierra el juego y ejecuta `Remove-ReFrame.ps1` desde `P3R\Binaries\Win64\ReFrame`. El script comprueba los hashes de los archivos y conserva los ajustes y registros generados. Añade `-WhatIf` para ver qué haría. [Guía de instalación y desinstalación](../INSTALLATION.md)
+- **Desinstalar** · Cierra el juego y ejecuta `Remove-ReFrame.ps1` desde `P3R\Binaries\Win64\ReFrame`. El script comprueba los hashes de los archivos y conserva los ajustes y registros generados. Añade `-WhatIf` para ver qué haría. [Guía de instalación y desinstalación](INSTALLATION.es-ES.md)
 
 [Instalación](#instalaci%C3%B3n) · [¿Por qué no renderizar al 200%?](#por-qu%C3%A9-no-renderizar-al-200) · [¿Qué modo debería usar?](#qu%C3%A9-modo-deber%C3%ADa-usar) · [Funciones](#funciones) · [Tarjetas gráficas compatibles](#tarjetas-gr%C3%A1ficas-compatibles) · [Ajustes y modos avanzados](#ajustes-y-modos-avanzados) · [Compatibilidad y limitaciones](#compatibilidad-y-limitaciones) · [Solución de problemas](#soluci%C3%B3n-de-problemas) · [Compilar desde el código fuente](#compilar-desde-el-c%C3%B3digo-fuente) · [Licencia](#licencia)
 
@@ -73,7 +73,7 @@ La disponibilidad y los resultados dependen de la GPU, el controlador y la escen
 
 ## Requisitos
 
-RE:FRAME requiere una copia de Persona 3 Reload adquirida legalmente en Steam, Windows 10 u 11 x64, DirectX 12 y un controlador gráfico adecuado. La versión 1.0.0 está destinada a la **compilación de Steam 22672075** (ID de aplicación **2161700**).
+RE:FRAME requiere una copia de Persona 3 Reload adquirida legalmente en Steam, Windows 10 u 11 x64, DirectX 12 y un controlador gráfico adecuado. La versión 1.1.0 está destinada a la **compilación de Steam 22672075** (ID de aplicación **2161700**).
 
 ### Tarjetas gráficas compatibles
 
@@ -88,6 +88,8 @@ XeSS requiere Microsoft Visual C++ Redistributable x64 **14.40.33810 o posterior
 ## Ajustes y modos avanzados
 
 Elige una opción en **Suavizado de bordes** y luego un **Modo de calidad** disponible. **Modelo DLSS** aparece al usar NVIDIA DLSS. Con **TAA original** puedes ajustar la escala a mano. Si la gestiona una tecnología, el ajuste muestra el objetivo del SDK. Confirma o cancela en el cuadro de diálogo del juego. Puedes volver a **TAA original** y fijar una escala manual nueva con la misma confirmación.
+
+**Nitidez** ajusta el detalle tras la reconstrucción de DLAA, DLSS, FSR o XeSS y antes de dibujar el HUD. Va del 0 % (valor predeterminado, desactivado) al 100 % en pasos del 5 %. Aplica el ajuste para ver el cambio sin reiniciar. El valor se conserva entre tecnologías y modos de calidad. El TAA original oculta el control.
 
 ### Modos disponibles
 
@@ -121,7 +123,7 @@ Inglés, francés, italiano, alemán, español (España), japonés, coreano, pol
 
 - **Actualizaciones del juego** · No se han verificado otras compilaciones de Steam distintas de la 22672075, otras tiendas, entornos ajenos a Windows ni la combinación de varios proxies de D3D12.
 - **Modo de respaldo** · El juego utiliza **TAA original** en pasos de renderizado que no reconoce y en vistas secundarias, como los reflejos planos.
-- **Pruebas** · La versión 1.0.0 superó la compilación y las comprobaciones estáticas. En versiones de desarrollo anteriores se probaron DLAA, DLSS, FSR 3.1.6 y XeSS en su variante compatible con varias marcas en una RTX 5060. Quedan pendientes las pruebas en juego de la 1.0.0 y las pruebas específicas de FSR 4 en Radeon y XeSS optimizado para Intel en Arc. El rendimiento depende del equipo. [Pruebas y compatibilidad](../COMPATIBILITY.md)
+- **Pruebas** · Se comprobó la nitidez en el juego a 1080p con DLSS, FSR y XeSS en modo Rendimiento en una RTX 5060. Las pruebas independientes cubrieron los 14 modos de SDK disponibles en esa GPU. Aún faltan pruebas específicas de FSR 4 en Radeon y de XeSS optimizado para Intel en Arc. [Pruebas y compatibilidad](../COMPATIBILITY.md)
 
 ## Solución de problemas
 

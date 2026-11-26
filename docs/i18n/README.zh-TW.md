@@ -2,13 +2,13 @@
 
 [English](../../README.md) · [Français](README.fr-FR.md) · [Italiano](README.it-IT.md) · [Deutsch](README.de-DE.md) · [Español (España)](README.es-ES.md) · [日本語](README.ja-JP.md) · [한국어](README.ko-KR.md) · [Polski](README.pl-PL.md) · [Português (Brasil)](README.pt-BR.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md) · **[繁體中文](README.zh-TW.md)** · [Türkçe](README.tr-TR.md) · [Українська](README.uk-UA.md)
 
-<!-- source-readme: 834e57d57f2b49f6b6c8540a9c22bb0042aa92a7 -->
+<!-- source-readme: d635567e66ae8b9728ea8b204baf8079bd1c8590 -->
 
-![版本 1.0.0](https://img.shields.io/badge/release-1.0.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT 授權](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+![版本 1.1.0](https://img.shields.io/badge/release-1.1.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT 授權](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 在 **Persona 3 Reload** 中減少鋸齒和閃爍，不必把渲染比例拉到 200%。DLAA 或 FSR、XeSS 的原生反鋸齒 能在螢幕原本的解析度下平滑邊緣。如果想提高幀率，可以選擇超解析度模式。
 
-**[下載 RE:FRAME v1.0.0](https://github.com/Aporial/reframe-p3r/releases/latest)**
+**[RE:FRAME 已發佈版本](https://github.com/Aporial/reframe-p3r/releases/latest)**
 
 ![Persona 3 Reload 的遊戲內圖形選單，顯示 RE:FRAME 設定](../images/settings.png)
 
@@ -16,7 +16,7 @@
 
 ## 安裝
 
-1. 關閉遊戲，從 [GitHub 發佈頁面](https://github.com/Aporial/reframe-p3r/releases/latest)下載 **REFRAME-P3R-v1.0.0.zip**。
+1. 關閉遊戲，從 [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) 下載 **REFRAME-P3R-v1.1.0.zip**。
 2. 在 Steam 中以滑鼠右鍵點選 **Persona 3 Reload**，選擇 **內容 → 已安裝檔案 → 瀏覽**。
 3. 將 ZIP 解壓縮到已有 `P3R` 的遊戲根資料夾。解壓縮後，`d3d12.dll` 會與 `P3R.exe` 一同放在 `P3R\Binaries\Win64` 內。
 4. 像平常一樣從 Steam 啟動遊戲。
@@ -29,7 +29,7 @@ ZIP 已包含模組和必要的圖形執行階段程式庫。直接在遊戲選�
 ### 更新與解除安裝
 
 - **更新** · 關閉遊戲，執行舊版的解除安裝指令碼，再解壓縮新版 ZIP。若要沿用開發版本的設定，請保留 `P3RGraphicsEnhanced\Settings.ini`，直到 RE:FRAME 將設定儲存至 `ReFrame\Settings.ini`。
-- **解除安裝** · 關閉遊戲，在 `P3R\Binaries\Win64\ReFrame` 中執行 `Remove-ReFrame.ps1`。指令碼會核對檔案雜湊，並保留產生的設定和記錄。加上 `-WhatIf` 可以預覽操作。 [安裝與解除安裝指南](../INSTALLATION.md)
+- **解除安裝** · 關閉遊戲，在 `P3R\Binaries\Win64\ReFrame` 中執行 `Remove-ReFrame.ps1`。指令碼會核對檔案雜湊，並保留產生的設定和記錄。加上 `-WhatIf` 可以預覽操作。 [安裝與解除安裝指南](INSTALLATION.zh-TW.md)
 
 [安裝](#%E5%AE%89%E8%A3%9D) · [為什麼不直接把渲染比例設為 200%？](#%E7%82%BA%E4%BB%80%E9%BA%BC%E4%B8%8D%E7%9B%B4%E6%8E%A5%E6%8A%8A%E6%B8%B2%E6%9F%93%E6%AF%94%E4%BE%8B%E8%A8%AD%E7%82%BA-200) · [該選哪個模式？](#%E8%A9%B2%E9%81%B8%E5%93%AA%E5%80%8B%E6%A8%A1%E5%BC%8F) · [主要功能](#%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD) · [支援的顯示卡](#%E6%94%AF%E6%8F%B4%E7%9A%84%E9%A1%AF%E7%A4%BA%E5%8D%A1) · [進階設定與模式](#%E9%80%B2%E9%9A%8E%E8%A8%AD%E5%AE%9A%E8%88%87%E6%A8%A1%E5%BC%8F) · [相容性與限制](#%E7%9B%B8%E5%AE%B9%E6%80%A7%E8%88%87%E9%99%90%E5%88%B6) · [疑難排解](#%E7%96%91%E9%9B%A3%E6%8E%92%E8%A7%A3) · [從原始碼建置](#%E5%BE%9E%E5%8E%9F%E5%A7%8B%E7%A2%BC%E5%BB%BA%E7%BD%AE) · [授權](#%E6%8E%88%E6%AC%8A)
 
@@ -73,7 +73,7 @@ ZIP 已包含模組和必要的圖形執行階段程式庫。直接在遊戲選�
 
 ## 系統需求
 
-RE:FRAME 需要在 Steam 合法購買的 Persona 3 Reload、64 位元 Windows 10 或 11、DirectX 12 以及適用的顯示卡驅動程式。1.0.0 適用於 **Steam 組建 22672075**（應用程式 ID **2161700**）。
+RE:FRAME 需要在 Steam 合法購買的 Persona 3 Reload、64 位元 Windows 10 或 11、DirectX 12 以及適用的顯示卡驅動程式。1.1.0 適用於 **Steam 組建 22672075**（應用程式 ID **2161700**）。
 
 ### 支援的顯示卡
 
@@ -88,6 +88,8 @@ XeSS 需要 Microsoft Visual C++ x64 可轉散發套件 **14.40.33810 或更新�
 ## 進階設定與模式
 
 在 **反鋸齒技術** 中選擇技術，再選擇可用的 **畫質模式**。使用 NVIDIA DLSS 時會顯示 **DLSS 模型**。使用 **原生 TAA** 時可手動調整渲染比例。若由 SDK 管理，則會顯示其目標比例。透過遊戲的確認視窗套用或取消變更。切回 **原生 TAA** 時可以同時設定新的手動比例，再一起確認。
+
+**銳利度**在 DLAA、DLSS、FSR 或 XeSS 完成重建後、遊戲繪製 HUD 前調整場景細節。範圍為 0%（預設，關閉）到 100%，每格 5%。套用後立即生效，無需重新啟動。切換技術或畫質模式時會保留同一設定值。原生 TAA 會隱藏此選項。
 
 ### 可用模式
 
@@ -121,7 +123,7 @@ XeSS 需要 Microsoft Visual C++ x64 可轉散發套件 **14.40.33810 或更新�
 
 - **遊戲更新** · Steam 組建 22672075 以外的版本、其他商店版本、非 Windows 執行環境，以及與其他 D3D12 代理併用，皆尚未驗證。
 - **回到原生模式** · 遊戲對無法辨識的渲染階段及平面反射等次要視圖使用 **原生 TAA**。
-- **測試** · 1.0.0 已通過編譯和靜態檢查。較早的開發版本曾在 RTX 5060 上測試 DLAA、DLSS、FSR 3.1.6 和跨廠牌版本的 XeSS。1.0.0 的遊戲內測試，以及 Radeon 的 FSR 4 和 Intel Arc 上的 Intel 最佳化 XeSS 的獨立硬體測試尚未進行。效能因系統而異。 [測試範圍與相容性](../COMPATIBILITY.md)
+- **測試** · 已在 RTX 5060 上以 1080p 驗證 DLSS、FSR 和 XeSS 效能模式的遊戲內銳利度。離線測試涵蓋該顯示卡可用的全部 14 種 SDK 模式。Radeon 上的 FSR 4 和針對 Intel Arc 最佳化的 XeSS 仍須在相應硬體上測試。 [測試範圍與相容性](../COMPATIBILITY.md)
 
 ## 疑難排解
 

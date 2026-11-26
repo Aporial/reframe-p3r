@@ -2,13 +2,13 @@
 
 [English](../../README.md) · [Français](README.fr-FR.md) · [Italiano](README.it-IT.md) · [Deutsch](README.de-DE.md) · [Español (España)](README.es-ES.md) · **[日本語](README.ja-JP.md)** · [한국어](README.ko-KR.md) · [Polski](README.pl-PL.md) · [Português (Brasil)](README.pt-BR.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [Türkçe](README.tr-TR.md) · [Українська](README.uk-UA.md)
 
-<!-- source-readme: 834e57d57f2b49f6b6c8540a9c22bb0042aa92a7 -->
+<!-- source-readme: d635567e66ae8b9728ea8b204baf8079bd1c8590 -->
 
-![リリース 1.0.0](https://img.shields.io/badge/release-1.0.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT ライセンス](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+![バージョン 1.1.0](https://img.shields.io/badge/release-1.1.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT ライセンス](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 **Persona 3 Reload** の輪郭のギザつきやちらつきを、描画倍率を200%に上げずに抑えられます。DLAA や FSR・XeSS のネイティブAAなら、画面と同じ解像度で輪郭を滑らかにできます。フレームレートを重視するなら、アップスケーリングを選んでください。
 
-**[RE:FRAME v1.0.0 をダウンロード](https://github.com/Aporial/reframe-p3r/releases/latest)**
+**[RE:FRAME の公開リリース](https://github.com/Aporial/reframe-p3r/releases/latest)**
 
 ![RE:FRAME の項目が表示された Persona 3 Reload のグラフィック設定画面](../images/settings.png)
 
@@ -16,7 +16,7 @@
 
 ## インストール
 
-1. ゲームを終了し、[GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest)から **REFRAME-P3R-v1.0.0.zip** をダウンロードします。
+1. ゲームを終了し、[GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) から **REFRAME-P3R-v1.1.0.zip** をダウンロードします。
 2. Steam で **Persona 3 Reload** を右クリックし、**プロパティ → インストール済みファイル → 参照**を選びます。
 3. `P3R` がすでに入っているフォルダーに ZIP を展開します。`P3R\Binaries\Win64` の `P3R.exe` と同じ場所に `d3d12.dll` が入ります。
 4. いつもどおり Steam からゲームを起動します。
@@ -29,7 +29,7 @@ ZIP には MOD 本体と必要なグラフィック用ライブラリが入っ�
 ### 更新とアンインストール
 
 - **更新** · ゲームを終了し、旧版のアンインストーラーを実行してから、新しい ZIP を展開します。開発版の設定を引き継ぐには、RE:FRAME が `ReFrame\Settings.ini` に保存するまで `P3RGraphicsEnhanced\Settings.ini` を残してください。
-- **アンインストール** · ゲームを終了し、`P3R\Binaries\Win64\ReFrame` から `Remove-ReFrame.ps1` を実行します。スクリプトはファイルのハッシュを確認し、生成された設定やログは残します。`-WhatIf` を付けると削除対象を事前に確認できます。 [インストールと削除の手順](../INSTALLATION.md)
+- **アンインストール** · ゲームを終了し、`P3R\Binaries\Win64\ReFrame` から `Remove-ReFrame.ps1` を実行します。スクリプトはファイルのハッシュを確認し、生成された設定やログは残します。`-WhatIf` を付けると削除対象を事前に確認できます。 [インストールと削除の手順](INSTALLATION.ja-JP.md)
 
 [インストール](#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB) · [描画倍率を200%にしなくてもよい理由](#%E6%8F%8F%E7%94%BB%E5%80%8D%E7%8E%87%E3%82%92200%E3%81%AB%E3%81%97%E3%81%AA%E3%81%8F%E3%81%A6%E3%82%82%E3%82%88%E3%81%84%E7%90%86%E7%94%B1) · [どのモードを選ぶ？](#%E3%81%A9%E3%81%AE%E3%83%A2%E3%83%BC%E3%83%89%E3%82%92%E9%81%B8%E3%81%B6) · [主な機能](#%E4%B8%BB%E3%81%AA%E6%A9%9F%E8%83%BD) · [対応グラフィックカード](#%E5%AF%BE%E5%BF%9C%E3%82%B0%E3%83%A9%E3%83%95%E3%82%A3%E3%83%83%E3%82%AF%E3%82%AB%E3%83%BC%E3%83%89) · [詳細設定とモード](#%E8%A9%B3%E7%B4%B0%E8%A8%AD%E5%AE%9A%E3%81%A8%E3%83%A2%E3%83%BC%E3%83%89) · [互換性と制限](#%E4%BA%92%E6%8F%9B%E6%80%A7%E3%81%A8%E5%88%B6%E9%99%90) · [トラブルシューティング](#%E3%83%88%E3%83%A9%E3%83%96%E3%83%AB%E3%82%B7%E3%83%A5%E3%83%BC%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0) · [ソースコードからビルド](#%E3%82%BD%E3%83%BC%E3%82%B9%E3%82%B3%E3%83%BC%E3%83%89%E3%81%8B%E3%82%89%E3%83%93%E3%83%AB%E3%83%89) · [ライセンス](#%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9)
 
@@ -73,7 +73,7 @@ ZIP には MOD 本体と必要なグラフィック用ライブラリが入っ�
 
 ## 動作要件
 
-RE:FRAME には Steam で正規に購入した Persona 3 Reload、Windows 10 または 11 x64、DirectX 12 と対応するグラフィックドライバーが必要です。1.0.0 は **Steam ビルド 22672075**（アプリ ID **2161700**）向けです。
+RE:FRAME には Steam で正規に購入した Persona 3 Reload、Windows 10 または 11 x64、DirectX 12 と対応するグラフィックドライバーが必要です。1.1.0 は **Steam ビルド 22672075**（アプリ ID **2161700**）向けです。
 
 ### 対応グラフィックカード
 
@@ -88,6 +88,8 @@ XeSS には Microsoft Visual C++ x64 再頒布可能パッケージ **14.40.3381
 ## 詳細設定とモード
 
 **アンチエイリアス方式** で方式を選び、利用できる **品質モード** を選択します。NVIDIA DLSS では **DLSSモデル** が表示されます。**標準TAA** なら描画倍率を手動で変更でき、SDK が制御する場合は目標値が表示されます。ゲームの確認画面で変更を確定またはキャンセルできます。**標準TAA** に戻すときに新しい倍率も選び、まとめて確定できます。
+
+**シャープネス**は DLAA、DLSS、FSR、XeSS の再構成後、HUD の描画前に画像の細部を調整します。0%（初期値、無効）から 100% まで 5% 刻みです。変更を適用すると再起動せずに反映されます。値は方式や品質モードを切り替えても保持されます。標準TAAでは表示されません。
 
 ### 利用できるモード
 
@@ -121,7 +123,7 @@ M と L は、RTX 20・30 シリーズでは GPU の処理により時間がか�
 
 - **ゲームの更新** · Steam ビルド 22672075 以外、他のストア版、Windows 以外の実行環境、複数の D3D12 プロキシの併用は未確認です。
 - **標準モードへの切り替え** · 認識できない描画処理や平面反射などの副次的なビューでは、ゲーム本体が **標準TAA** を使用します。
-- **テスト** · 1.0.0 はコンパイルと静的チェックを通過しました。以前の開発版では RTX 5060 で DLAA、DLSS、FSR 3.1.6、複数メーカー対応版の XeSS をテストしました。1.0.0 のゲーム内テストと、Radeon の FSR 4、Arc の Intel 向けに最適化された XeSS の個別実機テストは未実施です。性能は環境によって異なります。 [テスト範囲と互換性](../COMPATIBILITY.md)
+- **テスト** · RTX 5060 を用い、DLSS、FSR、XeSS のパフォーマンスモードで 1080p のゲーム内検証を行いました。同 GPU で利用できる SDK の全 14 モードをオフラインでも検証しました。Radeon の FSR 4 と Intel Arc 向けに最適化された XeSS は、対応する実機での検証が残っています。 [テスト範囲と互換性](../COMPATIBILITY.md)
 
 ## トラブルシューティング
 

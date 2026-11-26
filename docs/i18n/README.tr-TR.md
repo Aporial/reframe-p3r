@@ -2,13 +2,13 @@
 
 [English](../../README.md) · [Français](README.fr-FR.md) · [Italiano](README.it-IT.md) · [Deutsch](README.de-DE.md) · [Español (España)](README.es-ES.md) · [日本語](README.ja-JP.md) · [한국어](README.ko-KR.md) · [Polski](README.pl-PL.md) · [Português (Brasil)](README.pt-BR.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · **[Türkçe](README.tr-TR.md)** · [Українська](README.uk-UA.md)
 
-<!-- source-readme: 834e57d57f2b49f6b6c8540a9c22bb0042aa92a7 -->
+<!-- source-readme: d635567e66ae8b9728ea8b204baf8079bd1c8590 -->
 
-![GitHub sürümü 1.0.0](https://img.shields.io/badge/release-1.0.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![Projenin kendi kaynak kodu için MIT Lisansı](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+![Sürüm 1.1.0](https://img.shields.io/badge/release-1.1.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![Projenin kendi kaynak kodu için MIT Lisansı](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 **Persona 3 Reload**'da işleme ölçeğini %200'e çıkarmadan tırtıklı kenarları ve görüntüdeki titreşimi azaltın. DLAA, FSR Yerel AA ve XeSS Yerel AA ekranınızın çözünürlüğünde daha temiz bir görüntü sağlar. Daha yüksek kare hızı için bir çözünürlük yükseltme modu seçebilirsiniz.
 
-**[RE:FRAME v1.0.0 sürümünü indirin](https://github.com/Aporial/reframe-p3r/releases/latest)**
+**[Yayımlanan RE:FRAME sürümleri](https://github.com/Aporial/reframe-p3r/releases/latest)**
 
 ![Persona 3 Reload grafik menüsündeki RE:FRAME ayarları](../images/settings.png)
 
@@ -16,7 +16,7 @@
 
 ## Kurulum
 
-1. Oyunu kapatın ve [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) sayfasından **REFRAME-P3R-v1.0.0.zip** arşivini indirin.
+1. Oyunu kapatın ve [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) sayfasından **REFRAME-P3R-v1.1.0.zip** dosyasını indirin.
 2. Steam'de **Persona 3 Reload**'a sağ tıklayın ve **Özellikler → Yüklü Dosyalar → Göz at** yolunu izleyin.
 3. ZIP arşivini `P3R` klasörünün bulunduğu konuma çıkarın. Böylece `d3d12.dll` dosyası, `P3R\Binaries\Win64` klasöründe `P3R.exe` dosyasının yanına yerleşir.
 4. Oyunu her zamanki gibi doğrudan Steam'den başlatın.
@@ -29,7 +29,7 @@ ZIP arşivinde mod ve gerekli grafik çalışma zamanı kitaplıkları bulunur. 
 ### Güncelleme ve kaldırma
 
 - **Güncelleme** · Oyunu kapatın, önceki sürümün kaldırma betiğini çalıştırın ve yeni ZIP arşivini çıkarın. Geliştirme sürümünden kalan ayarları korumak için RE:FRAME ayarları `ReFrame\Settings.ini` dosyasına kaydedene kadar `P3RGraphicsEnhanced\Settings.ini` dosyasını yerinde bırakın.
-- **Kaldırma** · Oyunu kapatın ve `P3R\Binaries\Win64\ReFrame` klasöründeki `Remove-ReFrame.ps1` betiğini çalıştırın. Betik dosya sağlama toplamlarını denetler, oluşturulan ayarları ve günlükleri saklar. Yapılacak işlemleri önceden görmek için `-WhatIf` seçeneğini ekleyin. [Kurulum ve kaldırma kılavuzu](../INSTALLATION.md)
+- **Kaldırma** · Oyunu kapatın ve `P3R\Binaries\Win64\ReFrame` klasöründeki `Remove-ReFrame.ps1` betiğini çalıştırın. Betik dosya sağlama toplamlarını denetler, oluşturulan ayarları ve günlükleri saklar. Yapılacak işlemleri önceden görmek için `-WhatIf` seçeneğini ekleyin. [Kurulum ve kaldırma kılavuzu](INSTALLATION.tr-TR.md)
 
 [Kurulum](#kurulum) · [Neden işleme ölçeğini %200'e çıkarmak yerine RE:FRAME kullanayım?](#neden-i%C5%9Fleme-%C3%B6l%C3%A7e%C4%9Fini-200e-%C3%A7%C4%B1karmak-yerine-reframe-kullanay%C4%B1m) · [Hangi modu seçmeliyim?](#hangi-modu-se%C3%A7meliyim) · [Özellikler](#%C3%B6zellikler) · [Desteklenen ekran kartları](#desteklenen-ekran-kartlar%C4%B1) · [Gelişmiş ayarlar ve modlar](#geli%C5%9Fmi%C5%9F-ayarlar-ve-modlar) · [Uyumluluk ve sınırlamalar](#uyumluluk-ve-s%C4%B1n%C4%B1rlamalar) · [Sorun giderme](#sorun-giderme) · [Kaynak koddan derleme](#kaynak-koddan-derleme) · [Lisans](#lisans)
 
@@ -73,7 +73,7 @@ Kullanılabilirlik ve sonuçlar ekran kartına, sürücüye ve sahneye bağlıd�
 
 ## Sistem gereksinimleri
 
-Steam'den yasal olarak satın alınmış bir Persona 3 Reload kopyası, Windows 10 veya 11 x64, DirectX 12 ve uygun bir ekran kartı sürücüsü gerekir. RE:FRAME 1.0.0, **Steam derlemesi 22672075** (uygulama kimliği **2161700**) için hazırlanmıştır.
+Steam'den yasal olarak satın alınmış bir Persona 3 Reload kopyası, Windows 10 veya 11 x64, DirectX 12 ve uygun bir ekran kartı sürücüsü gerekir. RE:FRAME 1.1.0, **Steam derlemesi 22672075** (uygulama kimliği **2161700**) için hazırlanmıştır.
 
 ### Desteklenen ekran kartları
 
@@ -88,6 +88,8 @@ XeSS için Microsoft Visual C++ x64 Yeniden Dağıtılabilir Paketi'nin **14.40.
 ## Gelişmiş ayarlar ve modlar
 
 **Kenar yumuşatma** bölümünden teknolojiyi, **Kalite modu** bölümünden kullanılabilir bir modu seçin. **DLSS modeli** satırı NVIDIA DLSS seçiliyken görünür. **Orijinal TAA** ile işleme ölçeğini elle ayarlayabilirsiniz. Ölçeği SDK yönetiyorsa satırda SDK'nın hedef değeri gösterilir. Değişiklikleri oyunun kendi onay ekranından kaydedebilir veya iptal edebilirsiniz. Orijinal TAA'ya dönüp işleme ölçeğini tek seferde değiştirebilir ve kaydedebilirsiniz.
+
+**Keskinlik**, DLAA, DLSS, FSR veya XeSS ile yeniden oluşturmadan sonra ve oyun HUD’ı çizmeden önce sahne ayrıntılarını ayarlar. Varsayılan değer %0’dır (kapalı). Ayar %5’lik adımlarla %100’e çıkar. Değişikliği uygulamak için oyunu yeniden başlatmanız gerekmez. Değer, teknoloji ve kalite modu değiştiğinde korunur. Orijinal TAA bu ayarı gizler.
 
 ### Kullanılabilir modlar
 
@@ -121,7 +123,7 @@ M ve L modelleri RTX 20 ve RTX 30 serisi ekran kartlarında daha fazla GPU süre
 
 - **Oyun güncellemeleri** · 22672075 dışındaki Steam derlemeleri, başka mağazalardaki sürümler, Windows dışındaki çalışma ortamları ve birden fazla D3D12 proxy'sinin birlikte kullanımı doğrulanmamıştır.
 - **TAA'ya dönüş** · Oyun, tanınmayan işleme adımlarında ve düzlemsel yansımalar gibi ikincil görünümlerde orijinal TAA kullanır.
-- **Testler** · 1.0.0 sürümü derlendi ve statik kontrollerden geçti. Önceki geliştirme sürümlerinde RTX 5060 üzerinde DLAA, DLSS, FSR 3.1.6 ve farklı üreticilerin ekran kartlarında çalışabilen XeSS uygulaması oyun içinde denendi. 1.0.0'ın oyun içi testleri, Radeon üzerinde FSR 4 ve Intel Arc üzerinde optimize XeSS donanım testleri henüz yapılmadı. Performans sisteme bağlıdır. [Test kapsamı ve uyumluluk](../COMPATIBILITY.md)
+- **Testler** · Keskinlik, bir RTX 5060 üzerinde DLSS, FSR ve XeSS’nin Performans modlarında 1080p’de oyun içinde doğrulandı. Çevrimdışı testler bu GPU’da kullanılabilen 14 SDK modunun tamamını kapsadı. Radeon’da FSR 4 ve Intel Arc için optimize edilmiş XeSS, ilgili donanımda ayrıca test edilmeli. [Test kapsamı ve uyumluluk](../COMPATIBILITY.md)
 
 ## Sorun giderme
 

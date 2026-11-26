@@ -25,6 +25,7 @@ if ((Test-Path -LiteralPath $stage) -or (Test-Path -LiteralPath $archive)) {
 }
 $bin = Join-Path $stage 'P3R/Binaries/Win64'
 New-Item -ItemType Directory -Path (Join-Path $bin 'ReFrame/Licenses') -Force | Out-Null
+New-Item -ItemType Directory -Path (Join-Path $bin 'ReFrame/i18n') -Force | Out-Null
 $files = [ordered]@{
     'd3d12.dll' = $dll
     'ReFrame/nvngx_dlss.dll' = (Join-Path $DependencyRoot 'nvidia-v310.9.16/lib/Windows_x86_64/rel/nvngx_dlss.dll')
@@ -37,9 +38,15 @@ $files = [ordered]@{
     'ReFrame/Licenses/NVIDIA.txt' = (Join-Path $DependencyRoot 'nvidia-v310.9.16/LICENSE.txt')
     'ReFrame/Licenses/AMD.md' = (Join-Path $DependencyRoot 'fsr-v2.4.0/docs/license.md')
     'ReFrame/Licenses/AMD-ThirdParty.md' = (Join-Path $DependencyRoot 'fsr-v2.4.0/3rdpartynotice.md')
+    'ReFrame/Licenses/AMD-FidelityFX-CAS.txt' = (Join-Path $root 'licenses/AMD-FidelityFX-CAS.txt')
     'ReFrame/Licenses/Intel.txt' = (Join-Path $DependencyRoot 'xess-v3.0.2/LICENSE.txt')
     'ReFrame/Licenses/Intel-ThirdParty.txt' = (Join-Path $DependencyRoot 'xess-v3.0.2/third-party-programs.txt')
     'ReFrame/Licenses/MinHook.txt' = (Join-Path $DependencyRoot 'MinHook-1.3.4/LICENSE.txt')
+}
+$guideLanguages = @('de-DE','es-ES','fr-FR','it-IT','ja-JP','ko-KR','pl-PL','pt-BR','ru-RU','tr-TR','uk-UA','zh-CN','zh-TW')
+foreach ($language in $guideLanguages) {
+    $guide = "i18n/INSTALLATION.$language.md"
+    $files["ReFrame/$guide"] = Join-Path $root "docs/$guide"
 }
 $manifest = [ordered]@{
     Project = 'reframe-p3r'

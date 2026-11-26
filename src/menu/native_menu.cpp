@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <cstddef>
 #include <cstring>
 #include <cwchar>
@@ -41,7 +42,8 @@ constexpr unsigned controller_draw_actor = 0x430;
 constexpr unsigned graphics_navigation = 0x78;
 constexpr unsigned state_in_controller = 0x288;
 constexpr int original_graphics_rows = 6;
-constexpr int max_graphics_rows = original_graphics_rows + 3;
+constexpr int max_graphics_rows = original_graphics_rows + 4;
+constexpr int sharpness_max_index = sharpness_max / sharpness_step;
 
 template<class T> struct GameArray {
     T* data;
@@ -67,17 +69,17 @@ using DrawParam = void* (*)(void*, SharedRow*);
 using MenuTick = void (*)(std::byte*, int, float);
 using ListStep = void (*)(void*, bool);
 
-enum class RowKind { Technology, Quality, Model, Scale };
+enum class RowKind { Technology, Quality, Model, Sharpness, Scale };
 constexpr size_t Index(RowKind kind) { return static_cast<size_t>(kind); }
 
-constexpr std::array<bool, 3> VisibleAdditions(Technology technology) {
-    return {true, technology != Technology::Taa, technology == Technology::Dlss};
+constexpr std::array<bool, 4> VisibleAdditions(Technology technology) {
+    return {true, technology != Technology::Taa, technology == Technology::Dlss, technology != Technology::Taa};
 }
 
-static_assert(VisibleAdditions(Technology::Taa) == std::array{true, false, false});
-static_assert(VisibleAdditions(Technology::Dlss) == std::array{true, true, true});
-static_assert(VisibleAdditions(Technology::Fsr) == std::array{true, true, false});
-static_assert(VisibleAdditions(Technology::Xess) == std::array{true, true, false});
+static_assert(VisibleAdditions(Technology::Taa) == std::array{true, false, false, false});
+static_assert(VisibleAdditions(Technology::Dlss) == std::array{true, true, true, true});
+static_assert(VisibleAdditions(Technology::Fsr) == std::array{true, true, false, true});
+static_assert(VisibleAdditions(Technology::Xess) == std::array{true, true, false, true});
 static_assert(static_cast<int>(Model::Auto) == 0 && static_cast<int>(Model::K) == 1 &&
               static_cast<int>(Model::M) == 2 && static_cast<int>(Model::L) == 3);
 
@@ -89,10 +91,10 @@ struct MenuPage {
     const MenuText* text = nullptr;
     void* controller = nullptr;
     int group_index = 0;
-    std::array<void*, 4> rows{};
+    std::array<void*, 5> rows{};
     // Technology is owned by the game list. Its destructor releases this
-    // page's extra native references to Quality and Model.
-    std::array<SharedRow, 3> additions{};
+    // page's extra native references to its optional rows.
+    std::array<SharedRow, 4> additions{};
     std::array<RenderRecommendation, static_cast<size_t>(Quality::Count)> resolutions{};
     ULONGLONG next_language_check = 0;
     bool layout_dirty = false;
@@ -102,7 +104,7 @@ struct MenuPage {
 struct MenuRow {
     std::shared_ptr<MenuPage> page;
     RowKind kind;
-    std::array<int, 6> values{};
+    std::array<int, sharpness_max_index + 1> values{};
 };
 
 static_assert(sizeof(GameString) == 0x10 && sizeof(SharedRow) == 0x10 && sizeof(SharedControl) == 0x18);
@@ -201,10 +203,14 @@ void RebuildRow(MenuPage& page, RowKind kind) {
             if (quality == Quality::Native || page.resolutions[index].optimal.width) add(static_cast<int>(quality), labels[index]);
         }
         selected = static_cast<int>(page.draft.quality);
-    } else {
+    } else if (kind == RowKind::Model) {
         for (size_t i = 0; i < text.model_names.size(); ++i) add(static_cast<int>(i), text.model_names[i]);
         selected = static_cast<int>(page.draft.model);
         AssignText(Field<GameString>(row, 0x20), text.model_help[selected]);
+    } else {
+        for (int percent = 0; percent <= sharpness_max; percent += sharpness_step)
+            add(percent, FormatSharpnessValue(percent, text));
+        selected = page.draft.sharpness;
     }
     Field<int>(row, 0x74) = options.count;
     const auto choice = std::find(meta.values.begin(), meta.values.begin() + options.count, selected);
@@ -228,9 +234,9 @@ const MenuText& GameLanguage();
 void RefreshLanguage(MenuPage& page, const MenuText& text) {
     if (page.text == &text) return;
     page.text = &text;
-    const wchar_t* titles[]{text.technology, text.quality, text.model};
+    const wchar_t* titles[]{text.technology, text.quality, text.model, text.sharpness};
     const wchar_t* descriptions[]{text.technology_help, text.quality_help,
-        text.model_help[static_cast<size_t>(page.draft.model)]};
+        text.model_help[static_cast<size_t>(page.draft.model)], text.sharpness_help};
     for (size_t i = 0; i < std::size(titles); ++i) {
         if (auto* row = page.rows[i]) {
             AssignText(Field<GameString>(row, 0x10), titles[i]);
@@ -249,6 +255,7 @@ void InitializePage(MenuPage& page) {
     RebuildRow(page, RowKind::Technology);
     RebuildQuality(page);
     RebuildRow(page, RowKind::Model);
+    RebuildRow(page, RowKind::Sharpness);
     page.layout_dirty = page.scale_dirty = true;
 }
 
@@ -292,8 +299,9 @@ void ApplyChoice(void* row) {
     }
     if (page.saved.technology != Technology::Taa && page.draft.technology == Technology::Taa)
         ApplyOriginalRenderingScale(page);
-    Log("Native graphics menu applied technology %u, quality %u, model %u.", static_cast<unsigned>(page.draft.technology),
-        static_cast<unsigned>(page.draft.quality), static_cast<unsigned>(page.draft.model));
+    Log("Native graphics menu applied technology %u, quality %u, model %u, Sharpness %d%%.",
+        static_cast<unsigned>(page.draft.technology), static_cast<unsigned>(page.draft.quality),
+        static_cast<unsigned>(page.draft.model), page.draft.sharpness);
     InitializePage(page);
 }
 
@@ -319,6 +327,7 @@ void SetChoice(void* row, int index) {
         page.draft.model = static_cast<Model>(selected);
         AssignText(Field<GameString>(row, 0x20), page.text->model_help[selected]);
         break;
+    case RowKind::Sharpness: page.draft.sharpness = selected; break;
     case RowKind::Scale: break;
     }
     Log("Native graphics menu staged row %zu, value %d.", Index(meta.kind), selected);
@@ -338,6 +347,20 @@ bool MoveChoice(void* row, bool right) {
     return true;
 }
 
+void SlideChoice(void* row, float position) {
+    const auto& meta = rows.at(row);
+    if (meta.kind != RowKind::Sharpness) {
+        At<void (*)(void*, float)>(0x1395610)(row, position);
+        return;
+    }
+    if (!CanEdit(meta) || !std::isfinite(position)) return;
+    const auto index = static_cast<int>(std::clamp(position, 0.0f, 1.0f) * sharpness_max_index + 0.5f);
+    if (index != Field<int>(row, 0x60)) {
+        SetChoice(row, index);
+        At<void (*)(int)>(0x1028730)(0);
+    }
+}
+
 bool Editable(void* row) {
     return CanEdit(rows.at(row));
 }
@@ -353,8 +376,7 @@ void* Destroy(void* row, unsigned flags) {
             const auto active = pages.find(page->controller);
             if (active != pages.end() && active->second.lock() == page) pages.erase(active);
             const auto held = std::exchange(page->additions, {});
-            ReleaseRow(held[Index(RowKind::Quality)]);
-            ReleaseRow(held[Index(RowKind::Model)]);
+            for (size_t i = 1; i < held.size(); ++i) ReleaseRow(held[i]);
         }
     }
     using Delete = void* (*)(void*, unsigned);
@@ -395,9 +417,10 @@ const MenuText& GameLanguage() {
 }
 
 SharedRow MakeRow(const std::shared_ptr<MenuPage>& page, RowKind kind, const wchar_t* title, const wchar_t* description) {
+    const int capacity = kind == RowKind::Sharpness ? sharpness_max_index + 1 : 6;
     void* row = GameAllocate(row_size);
     auto* control = static_cast<SharedControl*>(GameAllocate(sizeof(SharedControl)));
-    auto* options = static_cast<GameString*>(GameAllocate(6 * sizeof(GameString)));
+    auto* options = static_cast<GameString*>(GameAllocate(capacity * sizeof(GameString)));
     if (!row || !control || !options) {
         GameFree(row);
         GameFree(control);
@@ -410,7 +433,7 @@ SharedRow MakeRow(const std::shared_ptr<MenuPage>& page, RowKind kind, const wch
     // The constructor copies and frees these two owning FString arguments.
     At<void* (*)(void*, int, GameString*, GameString*, int, uint8_t)>(0x1385b20)(
         row, technology_id + static_cast<int>(Index(kind)), &name, &help, -1, 4);
-    Field<GameArray<GameString>>(row, 0xa0) = {options, 0, 6};
+    Field<GameArray<GameString>>(row, 0xa0) = {options, 0, capacity};
     Field<void**>(row, 0) = row_functions.data() + 1;
     rows.emplace(row, MenuRow{page, kind});
     page->rows[Index(kind)] = row;
@@ -447,10 +470,10 @@ constexpr GraphicsRows VisibleGraphicsRows(const Rows& current, const MenuPage& 
 
 constexpr bool StableGraphicsOrder(Technology technology) {
     int stock[original_graphics_rows]{};
-    int added[3]{};
+    int added[4]{};
     SharedRow previous[]{{&stock[0], nullptr}, {&stock[1], nullptr}, {&stock[2], nullptr}, {&stock[3], nullptr},
                          {&stock[4], nullptr}, {&stock[5], nullptr}, {&added[0], nullptr}, {&added[1], nullptr},
-                         {&added[2], nullptr}};
+                         {&added[2], nullptr}, {&added[3], nullptr}};
     MenuPage page{};
     page.draft.technology = technology;
     page.rows[Index(RowKind::Scale)] = &stock[1];
@@ -637,6 +660,7 @@ void GraphicsFactory(Groups* groups, void* definitions, void* controller) {
     page->additions[Index(RowKind::Quality)] = MakeRow(page, RowKind::Quality, text.quality, text.quality_help);
     page->additions[Index(RowKind::Model)] = MakeRow(page, RowKind::Model, text.model,
         text.model_help[static_cast<size_t>(page->draft.model)]);
+    page->additions[Index(RowKind::Sharpness)] = MakeRow(page, RowKind::Sharpness, text.sharpness, text.sharpness_help);
     page->rows[Index(RowKind::Scale)] = scale;
     InitializeChoice(choice.row);
     if (RefreshLayout(*page, graphics)) {
@@ -673,7 +697,9 @@ void* BuildDrawParam(void* output, SharedRow* source) {
     const auto meta = entry->second;
     auto* result = original_draw_param(output, source);
     if (meta.kind != RowKind::Scale) {
-        Field<uint8_t>(result, 0x2e) = 4; // The existing list-value widget.
+        // Rendering Scale's native widget subtype. The draw data already
+        // carries the current index, last index, and formatted value.
+        Field<uint8_t>(result, 0x2e) = 4;
         return result;
     }
     if (CanEdit(meta)) return result;
@@ -733,6 +759,7 @@ void InitializeNativeMenu() {
     slots[0x20 / 8] = reinterpret_cast<void*>(&CancelChoice);
     slots[0x28 / 8] = reinterpret_cast<void*>(&ApplyChoice);
     slots[0x38 / 8] = reinterpret_cast<void*>(&Editable);
+    slots[0x50 / 8] = reinterpret_cast<void*>(&SlideChoice);
     slots[0x70 / 8] = reinterpret_cast<void*>(&MoveChoice);
     slots[0x80 / 8] = reinterpret_cast<void*>(&MoveChoice);
     slots[0x88 / 8] = reinterpret_cast<void*>(&SetChoice);

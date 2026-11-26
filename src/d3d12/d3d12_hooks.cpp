@@ -576,6 +576,7 @@ const char* ReadFrame(Registry& state, const CommandState& command, GameFrame& g
     std::memcpy(game.clip_to_previous, view.current_to_history, sizeof(game.clip_to_previous));
     game.color_allocation = color_allocation;
     game.output_allocation = output_allocation;
+    game.output_format = output.format;
     game.mip_bias = std::isfinite(view.material_mip_bias) ? view.material_mip_bias : 0;
     game.jitter_index = taa::WholePhase(view.temporal_params[0], 0, 127);
     game.jitter_phases = taa::WholePhase(view.temporal_params[1], 1, 128);
@@ -1002,9 +1003,9 @@ HOOK(void, ExecuteLists, (ID3D12CommandQueue* queue, UINT count, ID3D12CommandLi
         return;
     }
     Scope scope;
-    const bool uses_upscaler = BeginUpscaleSubmission(count, lists);
+    const auto submission = BeginUpscaleSubmission(count, lists);
     OriginalExecuteLists(queue, count, lists);
-    if (uses_upscaler) EndUpscaleSubmission(queue);
+    if (submission.tracked) EndUpscaleSubmission(queue, submission);
 }
 
 #define INSTALL(obj, slot, name) ok &= Route##name::Install((obj), d3d12_slots.slot, #name)

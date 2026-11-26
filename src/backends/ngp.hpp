@@ -14,7 +14,7 @@ public:
     ~DlssSession();
     bool Open(ID3D12Device*, const std::filesystem::path&);
     RenderRecommendation Recommend(Quality, Size output) const;
-    bool Create(ID3D12GraphicsCommandList*, Settings, Size render, Size display);
+    bool Create(ID3D12GraphicsCommandList*, TemporalSelection, Size render, Size display);
     bool Dispatch(ID3D12GraphicsCommandList*, const Frame&);
     void ReleaseFeature();
     void Close();

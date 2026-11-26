@@ -2,11 +2,11 @@
 
 **[English](README.md)** · [Français](docs/i18n/README.fr-FR.md) · [Italiano](docs/i18n/README.it-IT.md) · [Deutsch](docs/i18n/README.de-DE.md) · [Español (España)](docs/i18n/README.es-ES.md) · [日本語](docs/i18n/README.ja-JP.md) · [한국어](docs/i18n/README.ko-KR.md) · [Polski](docs/i18n/README.pl-PL.md) · [Português (Brasil)](docs/i18n/README.pt-BR.md) · [Русский](docs/i18n/README.ru-RU.md) · [简体中文](docs/i18n/README.zh-CN.md) · [繁體中文](docs/i18n/README.zh-TW.md) · [Türkçe](docs/i18n/README.tr-TR.md) · [Українська](docs/i18n/README.uk-UA.md)
 
-![Release 1.0.0](https://img.shields.io/badge/release-1.0.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+![Release 1.1.0](https://img.shields.io/badge/release-1.1.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 Smooth jagged edges and reduce shimmering in **Persona 3 Reload** without setting Rendering Scale to 200%. Use DLAA, FSR Native AA, or XeSS Native AA for cleaner visuals at your screen’s resolution. If you want more performance, choose an upscaling mode.
 
-**[Download RE:FRAME v1.0.0](https://github.com/Aporial/reframe-p3r/releases/latest)**
+**[Published RE:FRAME releases](https://github.com/Aporial/reframe-p3r/releases/latest)**
 
 ![Persona 3 Reload’s native Graphics menu showing the RE:FRAME settings](docs/images/settings.png)
 
@@ -14,7 +14,7 @@ Smooth jagged edges and reduce shimmering in **Persona 3 Reload** without settin
 
 ## Installation
 
-1. Close the game and download **REFRAME-P3R-v1.0.0.zip** from [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest).
+1. Close the game and download **REFRAME-P3R-v1.1.0.zip** from [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest).
 2. In Steam, right-click **Persona 3 Reload** and choose **Properties → Installed Files → Browse**.
 3. Extract the ZIP into the folder that already contains `P3R`. The ZIP puts `d3d12.dll` next to `P3R.exe` in `P3R\Binaries\Win64`.
 4. Launch the game normally through Steam.
@@ -71,7 +71,7 @@ Availability and results depend on your GPU, driver, and the scene. The menu sho
 
 ## Requirements
 
-RE:FRAME requires a legally purchased copy of Persona 3 Reload on Steam, Windows 10 or 11 x64, DirectX 12, and a suitable graphics driver. Release 1.0.0 targets **Steam build 22672075** (app ID **2161700**).
+RE:FRAME requires a legally purchased copy of Persona 3 Reload on Steam, Windows 10 or 11 x64, DirectX 12, and a suitable graphics driver. Version 1.1.0 targets **Steam build 22672075** (app ID **2161700**).
 
 ### Supported hardware
 
@@ -86,6 +86,8 @@ XeSS needs the Microsoft Visual C++ x64 Redistributable **14.40.33810 or later**
 ## Advanced settings and modes
 
 Choose a backend with **Anti-Aliasing Technology**, then choose an available **Quality Mode**. The **DLSS Model** row appears for NVIDIA DLSS. **Rendering Scale** is editable with Original TAA and shows the selected SDK target when a backend manages it. Use the game’s normal prompt to confirm or cancel changes. You can set a new manual scale while switching back to Original TAA in the same save.
+
+**Sharpness** adjusts scene detail after DLAA, DLSS, FSR or XeSS reconstruction, before the game draws the HUD. It ranges from 0% to 100% in 5% steps and defaults to 0% (off). Apply the setting to see the change without restarting. The same value is saved across backends and quality modes. Original TAA hides the control.
 
 ### Available modes
 
@@ -119,7 +121,7 @@ English, French, Italian, German, Spanish (Spain), Japanese, Korean, Polish, Por
 
 - **Game updates** · Support for Steam builds other than 22672075 is unverified. Other stores, non-Windows runtimes, and stacking D3D12 proxies are also unverified.
 - **Fallback** · The game uses Original TAA for unrecognized render passes and secondary views such as planar reflections.
-- **Testing** · Version 1.0.0 passed compilation and static checks. Earlier development builds exercised DLAA, DLSS, FSR 3.1.6, and cross-vendor XeSS on an RTX 5060. In-game testing of 1.0.0 and separate hardware testing of Radeon FSR 4 and Intel-optimized XeSS on Arc are pending. Performance varies by system. [Test coverage and compatibility](docs/COMPATIBILITY.md)
+- **Testing** · Sharpness was verified in-game at 1080p in DLSS, FSR and XeSS Performance on an RTX 5060. Offline tests covered all 14 available SDK modes on that GPU. Radeon FSR 4 and Intel-optimized XeSS on Arc still need dedicated hardware testing. [Test coverage and compatibility](docs/COMPATIBILITY.md) · [Sharpness test scenario](docs/SHARPNESS_TESTING.md)
 
 ## Troubleshooting
 

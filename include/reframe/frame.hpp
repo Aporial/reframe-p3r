@@ -7,10 +7,28 @@ enum class Quality { Native, Quality, Balanced, Performance, UltraQuality, Ultra
 enum class Technology { Taa, Dlss, Fsr, Xess };
 enum class Model { Auto, K, M, L };
 
+inline constexpr int sharpness_step = 5;
+inline constexpr int sharpness_max = 100;
+
+constexpr int NormalizeSharpness(int value) {
+    if (value <= 0) return 0;
+    if (value >= sharpness_max) return sharpness_max;
+    return ((value + sharpness_step / 2) / sharpness_step) * sharpness_step;
+}
+
+struct TemporalSelection {
+    Technology technology;
+    Quality quality;
+    Model model;
+    bool operator==(const TemporalSelection&) const = default;
+};
+
 struct Settings {
     Technology technology = Technology::Dlss;
     Quality quality = Quality::Native;
     Model model = Model::Auto;
+    int sharpness = 0;
+    constexpr TemporalSelection Temporal() const { return {technology, quality, model}; }
     bool operator==(const Settings&) const = default;
 };
 
