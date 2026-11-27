@@ -22,6 +22,8 @@ See the [README](../README.md#requirements) for per-backend GPU and runtime requ
 
 - The city map fix was exercised on Steam build 22672075 at 1080p on the RTX 5060 with test build 1.1.3. The map used a full 1920×1080 stock view in FSR 3.1.6 Quality, DLSS Quality and cross-vendor XeSS Quality. The journal also confirmed that FSR and DLSS resumed 1280×720 → 1920×1080 reconstruction after closing the map. Release 1.1.4 uses the same rendering code and was checked offline. Other quality modes and output resolutions await manual checks. [City map verification](CITY_MAP_TESTING.md)
 
+- Test build 1.1.5 r4 reconstructed the city map at 1920×1080 from reduced DLSS, FSR and XeSS inputs. The packaged 1.1.5 DLL also recorded the map correction with FSR 3.1.6 Performance at 960×540 → 1920×1080 using its defaults. [City map Super Resolution test](TOWN_MAP_UPSCALING_TEST.md)
+
 ### Sharpness fixture on GeForce RTX 5060
 
 These are means from 24 synthetic D3D12 samples at 50% Sharpness. GPU time includes CAS and one copy. CPU time covers recording after warm-up. Scratch allocation is per output binding and excludes the scene, SDK and fixture buffers. The D3D12 debug layer was unavailable on the test machine.

@@ -31,7 +31,8 @@ ConstructDriver original_driver = nullptr;
 ConstructView original_view = nullptr;
 const BYTE* game_image = nullptr;
 std::atomic<float> requested_percentage{0.f};
-
+// The upper word identifies this map visit. The lower word counts corrected draws.
+std::atomic_uint64_t town_map_status{0};
 struct PauseStack {
     const uint8_t* data;
     int count;
@@ -103,16 +104,38 @@ void* CreateScreenPercentageDriver(void* object, const void* family, float stock
 
     const auto requested = GameplayScreenPercentage();
     const bool town_map = HasReducedSdkScale(requested) && screen_percentage && IsTownMapActive();
-    const bool use_sdk = GameplayUsesSdkScale(requested, screen_percentage, town_map);
+    static thread_local uint32_t map_visit = 0;
+    static thread_local bool was_town_map = false;
+    static thread_local TownMapPatchWatch watch;
+    static thread_local float reported_request = 0.f;
+    if (town_map && !was_town_map) {
+        if (++map_visit == 0) ++map_visit;
+        watch = {};
+        town_map_status.store(uint64_t{map_visit} << 32, std::memory_order_relaxed);
+        Log("TownMap %u opened; SDK view scale %.3f%% (stock %.3f%%).", map_visit, requested, 100.f * stock);
+    } else if (!town_map && was_town_map) {
+        town_map_status.store(0, std::memory_order_relaxed);
+        Log("TownMap %u closed.", map_visit);
+    }
+
+    bool map_uses_sdk = false;
+    const auto status = town_map_status.load(std::memory_order_relaxed);
+    if (town_map && status != 0) {
+        const auto progress = static_cast<uint32_t>(status);
+        map_uses_sdk = watch.Observe(progress);
+        if (!map_uses_sdk) {
+            town_map_status.store(0, std::memory_order_relaxed);
+            Log("TownMap %u has no recent corrected background draw; using the stock view scale %.3f%%.",
+                map_visit, 100.f * stock);
+        }
+    }
+
+    const bool use_sdk = GameplayUsesSdkScale(requested, screen_percentage, town_map, map_uses_sdk);
     const auto target = use_sdk ? requested / 100.f : stock;
     auto* driver = original_driver(object, family, target, screen_percentage, use_sdk ? target : upper);
     sdk_view_family = use_sdk ? GameplayViewFamily{family, driver} : GameplayViewFamily{};
 
-    static thread_local bool was_town_map = false;
-    static thread_local float reported_request = 0.f;
-    if (town_map && !was_town_map)
-        Log("TownMap pause active; stock view scale %.3f%% and stock upscale method.", 100.f * stock);
-    if (use_sdk && (requested != reported_request || was_town_map))
+    if (!town_map && use_sdk && (requested != reported_request || was_town_map))
         Log("Gameplay view family uses %.3f%% (stock %.3f%%).", 100.f * target, 100.f * stock);
     reported_request = use_sdk ? requested : 0.f;
     was_town_map = town_map;
@@ -201,6 +224,20 @@ float GameplayScreenPercentage() {
     return requested_percentage.load(std::memory_order_relaxed);
 }
 
+uint32_t TownMapEpoch() {
+    return static_cast<uint32_t>(town_map_status.load(std::memory_order_relaxed) >> 32);
+}
+
+bool NotifyTownMapCorrected(uint32_t epoch) {
+    uint64_t status = town_map_status.load(std::memory_order_relaxed);
+    while (epoch && (status >> 32) == epoch) {
+        const auto progress = static_cast<uint32_t>(status);
+        if (progress == UINT32_MAX) return false;
+        if (town_map_status.compare_exchange_weak(status, status + 1, std::memory_order_relaxed))
+            return progress == 0;
+    }
+    return false;
+}
 EngineVariables BindEngineVariables() {
     const auto base = GameImage();
     if (!base) return {};

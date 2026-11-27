@@ -1,10 +1,10 @@
-# RE:FRAME — Persona 3 Reload 1.1.4
+# RE:FRAME — Persona 3 Reload 1.1.5
 
 Por Aporia. Para uma cópia de Persona 3 Reload adquirida legalmente pelo Steam, ID do aplicativo **2161700**, build **22672075**. Requer Windows x64 e DirectX 12.
 
 ## Novidades
 
-O mapa da cidade usa a escala de renderização do jogo para que o cenário 3D preencha toda a área do mapa. Ao fechar o mapa, o jogo volta ao modo de upscaling selecionado.
+O mapa da cidade pode usar o modo de upscaling selecionado do DLSS, FSR ou XeSS. Se o RE:FRAME não conseguir corrigir o cenário 3D, o mapa volta à escala de renderização do jogo até ser fechado.
 
 A **Nitidez** usa FidelityFX CAS para ajustar os detalhes após a reconstrução por DLAA, DLSS, FSR ou XeSS, antes de desenhar o HUD. Vai de 0% (desativada por padrão) a 100% em passos de 5%. Aplique a mudança no menu de gráficos. Ela entra em vigor sem reiniciar, e o mesmo valor vale para todas as tecnologias e modos de qualidade. O TAA original oculta o controle.
 
@@ -12,7 +12,7 @@ A **Nitidez** usa FidelityFX CAS para ajustar os detalhes após a reconstrução
 
 1. Feche o jogo. No Steam, abra **Propriedades → Arquivos instalados → Explorar**.
 2. Se `P3R\Binaries\Win64` já tiver um `d3d12.dll`, siga as instruções de remoção do mod correspondente. Para atualizar o RE:FRAME, execute primeiro o `Remove-ReFrame.ps1` da versão anterior e, em seguida, extraia o novo ZIP.
-3. Compare o SHA-256 do ZIP com o arquivo `.sha256` fornecido. Extraia **REFRAME-P3R-v1.1.4.zip** na pasta que contém `P3R`. Inicie pelo Steam e selecione a tecnologia, o modo de qualidade e a nitidez no menu de gráficos.
+3. Compare o SHA-256 do ZIP com o arquivo `.sha256` fornecido. Extraia **REFRAME-P3R-v1.1.5.zip** na pasta que contém `P3R`. Inicie pelo Steam e selecione a tecnologia, o modo de qualidade e a nitidez no menu de gráficos.
 
 Mantenha `ReFrame\Settings.ini` para preservar suas configurações. Se estiver atualizando uma versão de desenvolvimento antiga, mantenha `P3RGraphicsEnhanced\Settings.ini` até o RE:FRAME salvar na nova pasta. O XeSS requer Microsoft Visual C++ Redistributable x64 14.40.33810 ou posterior.
 

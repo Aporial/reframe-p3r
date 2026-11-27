@@ -1,10 +1,10 @@
-# RE:FRAME — Persona 3 Reload 1.1.4
+# RE:FRAME — Persona 3 Reload 1.1.5
 
 作者為 Aporia。適用於在 Steam 合法購買的 Persona 3 Reload，應用程式 ID **2161700**，組建 **22672075**。需要 Windows x64 和 DirectX 12。
 
 ## 更新內容
 
-城市地圖會使用遊戲原有的算圖比例，讓 3D 背景填滿整個地圖區域。關閉地圖後，遊戲會恢復所選的超解析度模式。
+城市地圖可以使用所選的 DLSS、FSR 或 XeSS 超解析度模式。如果無法修正 3D 背景，地圖會恢復遊戲原有的算圖比例，直到地圖關閉。
 
 **銳利度**使用 FidelityFX CAS，在 DLAA、DLSS、FSR 或 XeSS 完成重建後、HUD 繪製前調整場景細節。預設為 0%（關閉），以 5% 為一格調至 100%。在圖形選單套用後立即生效，無須重新啟動。切換技術或畫質模式仍會保留相同數值。原生 TAA 會隱藏此選項。
 
@@ -12,7 +12,7 @@
 
 1. 關閉遊戲。在 Steam 中開啟**內容 → 已安裝檔案 → 瀏覽**。
 2. 若 `P3R\Binaries\Win64` 內已有 `d3d12.dll`，請依照原模組的說明移除。 更新 RE:FRAME 時，請先執行舊版的 `Remove-ReFrame.ps1`，再解壓縮新的 ZIP 檔案。
-3. 將 ZIP 的 SHA-256 與隨附的 `.sha256` 檔案比對。將 **REFRAME-P3R-v1.1.4.zip** 解壓縮至包含 `P3R` 的資料夾。從 Steam 啟動，在圖形選單選擇技術、畫質模式與銳利度。
+3. 將 ZIP 的 SHA-256 與隨附的 `.sha256` 檔案比對。將 **REFRAME-P3R-v1.1.5.zip** 解壓縮至包含 `P3R` 的資料夾。從 Steam 啟動，在圖形選單選擇技術、畫質模式與銳利度。
 
 保留 `ReFrame\Settings.ini` 以沿用設定。從舊開發版升級時，請保留 `P3RGraphicsEnhanced\Settings.ini`，直到 RE:FRAME 將設定儲存至新資料夾。XeSS 需要 Microsoft Visual C++ x64 可轉散發套件 14.40.33810 或更新版本。
 

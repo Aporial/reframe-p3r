@@ -5,6 +5,7 @@
 #include "vendor_backends.hpp"
 #include "temporal_settings.hpp"
 #include "sharpness.hpp"
+#include "town_map_view.hpp"
 #include "motion_cs.h"
 #include <dxgi1_6.h>
 #include <wrl/client.h>
@@ -12,6 +13,8 @@
 #include <algorithm>
 #include <array>
 #include <atomic>
+#include <bit>
+#include <cstring>
 #include <chrono>
 #include <cmath>
 #include <memory>
@@ -27,6 +30,13 @@ namespace {
 using Clock = std::chrono::steady_clock;
 constexpr UINT descriptors_per_pass = 5;
 constexpr UINT max_bindings = 1024;
+constexpr UINT town_map_slots = 16;
+constexpr UINT scratch_targets = SharpnessPass::target_count + town_map_slots;
+constexpr UINT sharpness_mask = (1u << SharpnessPass::target_count) - 1u;
+constexpr size_t town_map_alignment = D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT;
+constexpr size_t town_map_slot_size = (sizeof(TownMapViewConstants) + town_map_alignment - 1) &
+                                     ~(town_map_alignment - 1);
+static_assert(scratch_targets < 32);
 constexpr GUID resource_serial{0x12aad387,0x9ca5,0x4a08,{0x81,0xfd,0x49,0xd4,0x14,0x7b,0xfc,0x15}};
 
 struct MotionPass {
@@ -70,7 +80,7 @@ struct QueueProgress {
     ComPtr<ID3D12CommandQueue> queue;
     ComPtr<ID3D12Fence> fence;
     UINT64 last_signal = 0;
-    std::array<UINT64, SharpnessPass::target_count> sharpness_signals{};
+    std::array<UINT64, scratch_targets> scratch_signals{};
 };
 
 struct MainView {
@@ -91,6 +101,8 @@ struct Runtime {
     FsrApi fsr;
     XessApi xess;
     SharpnessPass sharpness_pass;
+    ComPtr<ID3D12Resource> town_map_upload;
+    std::byte* town_map_mapped = nullptr;
     uint32_t reported_sharpness_failures = 0;
     bool reported_sharpness_dispatch = false;
     Plan plan;
@@ -443,17 +455,17 @@ bool FinishedGpuWork(const Runtime& app) {
     return true;
 }
 
-uint32_t ReusableSharpnessTargets(const Runtime& app) {
+uint32_t ReusableScratchTargets(const Runtime& app) {
     if (app.untracked_work || app.submitting) return 0;
     uint32_t busy = 0;
     for (const auto& [list, targets] : app.recorded) busy |= targets;
     for (const auto& queue : app.queues) {
         const auto completed = queue.fence->GetCompletedValue();
         if (completed == UINT64_MAX) return 0;
-        for (UINT i = 0; i < queue.sharpness_signals.size(); ++i)
-            if (queue.sharpness_signals[i] > completed) busy |= 1u << i;
+        for (UINT i = 0; i < queue.scratch_signals.size(); ++i)
+            if (queue.scratch_signals[i] > completed) busy |= 1u << i;
     }
-    return ((1u << SharpnessPass::target_count) - 1u) & ~busy;
+    return ((1u << scratch_targets) - 1u) & ~busy;
 }
 
 const char* SharpnessStatusReason(SharpnessPass::Status status) {
@@ -559,6 +571,42 @@ bool ApplyMenuGraphics(Settings settings) {
     return true;
 }
 
+D3D12_GPU_VIRTUAL_ADDRESS CopyTownMapView(ID3D12GraphicsCommandList* list, const TownMapViewConstants& view) {
+    auto& app = App();
+    std::lock_guard lock(app.mutex);
+    if (!app.device || app.queues.empty()) return 0;
+    const uint32_t mask = ReusableScratchTargets(app) & ~sharpness_mask;
+    if (!mask) return 0;
+    const auto bit = std::countr_zero(mask);
+    const auto index = bit - SharpnessPass::target_count;
+
+    if (!app.town_map_upload) {
+        D3D12_HEAP_PROPERTIES heap{};
+        heap.Type = D3D12_HEAP_TYPE_UPLOAD;
+        heap.CreationNodeMask = heap.VisibleNodeMask = 1;
+        D3D12_RESOURCE_DESC desc{};
+        desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+        desc.Width = town_map_slot_size * town_map_slots;
+        desc.Height = 1;
+        desc.DepthOrArraySize = 1;
+        desc.MipLevels = 1;
+        desc.SampleDesc.Count = 1;
+        desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+        ComPtr<ID3D12Resource> resource;
+        if (FAILED(app.device->CreateCommittedResource(&heap, D3D12_HEAP_FLAG_NONE, &desc,
+                   D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&resource)))) return 0;
+        void* mapped = nullptr;
+        const D3D12_RANGE empty{0, 0};
+        if (FAILED(resource->Map(0, &empty, &mapped)) || !mapped) return 0;
+        app.town_map_mapped = static_cast<std::byte*>(mapped);
+        app.town_map_upload = std::move(resource);
+    }
+    const auto offset = index * town_map_slot_size;
+    app.recorded.try_emplace(list, 0).first->second |= 1u << bit;
+    std::memcpy(app.town_map_mapped + offset, &view, sizeof(view));
+    return app.town_map_upload->GetGPUVirtualAddress() + offset;
+}
+
 void ObserveUpscaleQueue(ID3D12CommandQueue* queue) noexcept {
     try {
         auto& app = App();
@@ -581,8 +629,7 @@ UpscaleSubmission BeginUpscaleSubmission(UINT count, ID3D12CommandList* const* l
         const auto record = app.recorded.find(lists[i]);
         if (record == app.recorded.end()) continue;
         submission.tracked = true;
-        submission.sharpness_targets |= record->second;
-        if (!app.sharpness_pass.AllocatedBytes()) break;
+        submission.scratch_targets |= record->second;
     }
     if (submission.tracked) ++app.submitting;
     return submission;
@@ -597,9 +644,9 @@ void EndUpscaleSubmission(ID3D12CommandQueue* queue, UpscaleSubmission submissio
     for (auto& q : app.queues) {
         if (q.queue.Get() != queue) continue;
         if (FAILED(queue->Signal(q.fence.Get(), ++q.last_signal))) break;
-        if (submission.sharpness_targets)
-            for (UINT i = 0; i < q.sharpness_signals.size(); ++i)
-                if (submission.sharpness_targets & (1u << i)) q.sharpness_signals[i] = q.last_signal;
+        if (submission.scratch_targets)
+            for (UINT i = 0; i < q.scratch_signals.size(); ++i)
+                if (submission.scratch_targets & (1u << i)) q.scratch_signals[i] = q.last_signal;
         return;
     }
     if (!app.untracked_work) Log("SDK work could not be fenced; preserving Original TAA until restart.");
@@ -793,7 +840,7 @@ bool RenderUpscaled(ID3D12GraphicsCommandList* list, GameFrame& game) {
         };
         auto result = record(0);
         if (result.status == SharpnessPass::Status::TargetsBusy) {
-            if (const auto reusable = ReusableSharpnessTargets(app)) result = record(reusable);
+            if (const auto reusable = ReusableScratchTargets(app) & sharpness_mask) result = record(reusable);
         }
         if (result.Succeeded()) {
             used_targets |= result.target;

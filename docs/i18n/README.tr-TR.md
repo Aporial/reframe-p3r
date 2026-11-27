@@ -2,9 +2,9 @@
 
 [English](../../README.md) · [Français](README.fr-FR.md) · [Italiano](README.it-IT.md) · [Deutsch](README.de-DE.md) · [Español (España)](README.es-ES.md) · [日本語](README.ja-JP.md) · [한국어](README.ko-KR.md) · [Polski](README.pl-PL.md) · [Português (Brasil)](README.pt-BR.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · **[Türkçe](README.tr-TR.md)** · [Українська](README.uk-UA.md)
 
-<!-- source-readme: 8deef3923bb5be1cd0937c169e899628281472fb -->
+<!-- source-readme: b12cefc126e3d34cc793adb23450c6fb1ae2ac13 -->
 
-![Sürüm 1.1.4](https://img.shields.io/badge/release-1.1.4-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![Projenin kendi kaynak kodu için MIT Lisansı](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+![Sürüm 1.1.5](https://img.shields.io/badge/release-1.1.5-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![Projenin kendi kaynak kodu için MIT Lisansı](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 **Persona 3 Reload**'da işleme ölçeğini %200'e çıkarmadan tırtıklı kenarları ve görüntüdeki titreşimi azaltın. DLAA, FSR Yerel AA ve XeSS Yerel AA ekranınızın çözünürlüğünde daha temiz bir görüntü sağlar. Daha yüksek kare hızı için bir çözünürlük yükseltme modu seçebilirsiniz.
 
@@ -16,7 +16,7 @@
 
 ## Kurulum
 
-1. Oyunu kapatın ve [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) sayfasından **REFRAME-P3R-v1.1.4.zip** dosyasını indirin.
+1. Oyunu kapatın ve [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) sayfasından **REFRAME-P3R-v1.1.5.zip** dosyasını indirin.
 2. Steam'de **Persona 3 Reload**'a sağ tıklayın ve **Özellikler → Yüklü Dosyalar → Göz at** yolunu izleyin.
 3. ZIP arşivini `P3R` klasörünün bulunduğu konuma çıkarın. Böylece `d3d12.dll` dosyası, `P3R\Binaries\Win64` klasöründe `P3R.exe` dosyasının yanına yerleşir.
 4. Oyunu her zamanki gibi doğrudan Steam'den başlatın.
@@ -73,7 +73,7 @@ Kullanılabilirlik ve sonuçlar ekran kartına, sürücüye ve sahneye bağlıd�
 
 ## Sistem gereksinimleri
 
-Steam'den yasal olarak satın alınmış bir Persona 3 Reload kopyası, Windows 10 veya 11 x64, DirectX 12 ve uygun bir ekran kartı sürücüsü gerekir. RE:FRAME 1.1.4, **Steam derlemesi 22672075** (uygulama kimliği **2161700**) için hazırlanmıştır.
+Steam'den yasal olarak satın alınmış bir Persona 3 Reload kopyası, Windows 10 veya 11 x64, DirectX 12 ve uygun bir ekran kartı sürücüsü gerekir. RE:FRAME 1.1.5, **Steam derlemesi 22672075** (uygulama kimliği **2161700**) için hazırlanmıştır.
 
 ### Desteklenen ekran kartları
 

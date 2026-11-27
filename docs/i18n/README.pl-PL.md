@@ -2,9 +2,9 @@
 
 [English](../../README.md) · [Français](README.fr-FR.md) · [Italiano](README.it-IT.md) · [Deutsch](README.de-DE.md) · [Español (España)](README.es-ES.md) · [日本語](README.ja-JP.md) · [한국어](README.ko-KR.md) · **[Polski](README.pl-PL.md)** · [Português (Brasil)](README.pt-BR.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [Türkçe](README.tr-TR.md) · [Українська](README.uk-UA.md)
 
-<!-- source-readme: 8deef3923bb5be1cd0937c169e899628281472fb -->
+<!-- source-readme: b12cefc126e3d34cc793adb23450c6fb1ae2ac13 -->
 
-![Wersja 1.1.4](https://img.shields.io/badge/release-1.1.4-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![Licencja MIT](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+![Wersja 1.1.5](https://img.shields.io/badge/release-1.1.5-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![Licencja MIT](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 Wygładź poszarpane krawędzie i ogranicz migotanie w **Persona 3 Reload** bez ustawiania skali renderowania na 200%. DLAA oraz natywne AA w FSR lub XeSS wygładzają krawędzie w rozdzielczości ekranu. Jeśli zależy Ci na wydajności, wybierz tryb skalowania obrazu.
 
@@ -16,7 +16,7 @@ Wygładź poszarpane krawędzie i ogranicz migotanie w **Persona 3 Reload** bez 
 
 ## Instalacja
 
-1. Zamknij grę i pobierz **REFRAME-P3R-v1.1.4.zip** z [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest).
+1. Zamknij grę i pobierz **REFRAME-P3R-v1.1.5.zip** z [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest).
 2. Na Steam kliknij prawym przyciskiem myszy **Persona 3 Reload** i wybierz **Właściwości → Zainstalowane pliki → Przeglądaj**.
 3. Rozpakuj ZIP do folderu, w którym jest już katalog `P3R`. Archiwum umieści `d3d12.dll` obok `P3R.exe` w `P3R\Binaries\Win64`.
 4. Uruchom grę normalnie przez Steam.
@@ -73,7 +73,7 @@ Dostępność i wyniki zależą od GPU, sterownika i sceny. Menu pokazuje opcje 
 
 ## Wymagania
 
-RE:FRAME wymaga legalnie kupionej na Steam kopii Persona 3 Reload, Windows 10 lub 11 x64, DirectX 12 i odpowiedniego sterownika graficznego. Wersja 1.1.4 jest przeznaczona dla **kompilacji Steam 22672075** (ID aplikacji **2161700**).
+RE:FRAME wymaga legalnie kupionej na Steam kopii Persona 3 Reload, Windows 10 lub 11 x64, DirectX 12 i odpowiedniego sterownika graficznego. Wersja 1.1.5 jest przeznaczona dla **kompilacji Steam 22672075** (ID aplikacji **2161700**).
 
 ### Obsługiwane karty graficzne
 

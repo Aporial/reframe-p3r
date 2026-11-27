@@ -2,9 +2,9 @@
 
 [English](../../README.md) · [Français](README.fr-FR.md) · [Italiano](README.it-IT.md) · [Deutsch](README.de-DE.md) · [Español (España)](README.es-ES.md) · [日本語](README.ja-JP.md) · [한국어](README.ko-KR.md) · [Polski](README.pl-PL.md) · [Português (Brasil)](README.pt-BR.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [Türkçe](README.tr-TR.md) · **[Українська](README.uk-UA.md)**
 
-<!-- source-readme: 8deef3923bb5be1cd0937c169e899628281472fb -->
+<!-- source-readme: b12cefc126e3d34cc793adb23450c6fb1ae2ac13 -->
 
-![Версія 1.1.4](https://img.shields.io/badge/release-1.1.4-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![Ліцензія MIT](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+![Версія 1.1.5](https://img.shields.io/badge/release-1.1.5-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![Ліцензія MIT](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 Згладжуйте зубчасті краї та зменшуйте мерехтіння в **Persona 3 Reload** без підвищення масштабу рендерингу до 200%. DLAA та нативне згладжування FSR або XeSS дають чіткіше зображення в роздільній здатності екрана. Якщо важливіша частота кадрів, виберіть режим апскейлінгу.
 
@@ -16,7 +16,7 @@
 
 ## Встановлення
 
-1. Закрийте гру й завантажте **REFRAME-P3R-v1.1.4.zip** із [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest).
+1. Закрийте гру й завантажте **REFRAME-P3R-v1.1.5.zip** із [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest).
 2. У Steam клацніть правою кнопкою миші **Persona 3 Reload** і виберіть **Властивості → Інстальовані файли → Огляд** (Properties → Installed Files → Browse).
 3. Розпакуйте ZIP у папку, у якій уже є каталог `P3R`. Файл `d3d12.dll` має опинитися поруч із `P3R.exe` у папці `P3R\Binaries\Win64`.
 4. Запустіть гру через Steam як звичайно.
@@ -73,7 +73,7 @@
 
 ## Системні вимоги
 
-Потрібна легально придбана копія Persona 3 Reload у Steam, Windows 10 або 11 x64, DirectX 12 і відповідний графічний драйвер. Реліз 1.1.4 розрахований на **збірку Steam 22672075** (ID застосунку **2161700**).
+Потрібна легально придбана копія Persona 3 Reload у Steam, Windows 10 або 11 x64, DirectX 12 і відповідний графічний драйвер. Реліз 1.1.5 розрахований на **збірку Steam 22672075** (ID застосунку **2161700**).
 
 ### Підтримувані відеокарти
 

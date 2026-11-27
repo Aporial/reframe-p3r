@@ -6,4 +6,4 @@ Use GitHub's private vulnerability report feature from the repository's **Securi
 
 Include the RE:FRAME version and archive SHA-256, game build, Windows version, affected component and a short impact description. Share only the information needed to reproduce the issue. Keep access tokens, machine paths and game captures private.
 
-Use the normal bug template for rendering and compatibility issues. The current release line is 1.0.x.
+Use the normal bug template for rendering and compatibility issues. Check [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) for the current version.

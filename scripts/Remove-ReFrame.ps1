@@ -43,7 +43,7 @@ $allowed = @(
 )
 switch -CaseSensitive ($manifest.Version) {
     '1.0.0' {}
-    { $_ -cin @('1.1.0','1.1.1','1.1.2','1.1.3','1.1.4') } {
+    { $_ -cin @('1.1.0','1.1.1','1.1.2','1.1.3','1.1.4','1.1.5') } {
         $allowed += 'ReFrame/Licenses/AMD-FidelityFX-CAS.txt'
         if ($manifest.Version -ceq '1.1.0' -and @($manifest.Files).Count -eq ($allowed.Count + 1)) {
             $allowed += 'ReFrame/Sharpness-Testing.md' # The 1.1.0 test archive.

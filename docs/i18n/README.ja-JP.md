@@ -2,9 +2,9 @@
 
 [English](../../README.md) · [Français](README.fr-FR.md) · [Italiano](README.it-IT.md) · [Deutsch](README.de-DE.md) · [Español (España)](README.es-ES.md) · **[日本語](README.ja-JP.md)** · [한국어](README.ko-KR.md) · [Polski](README.pl-PL.md) · [Português (Brasil)](README.pt-BR.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [Türkçe](README.tr-TR.md) · [Українська](README.uk-UA.md)
 
-<!-- source-readme: 8deef3923bb5be1cd0937c169e899628281472fb -->
+<!-- source-readme: b12cefc126e3d34cc793adb23450c6fb1ae2ac13 -->
 
-![バージョン 1.1.4](https://img.shields.io/badge/release-1.1.4-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT ライセンス](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+![バージョン 1.1.5](https://img.shields.io/badge/release-1.1.5-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT ライセンス](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 **Persona 3 Reload** の輪郭のギザつきやちらつきを、描画倍率を200%に上げずに抑えられます。DLAA や FSR・XeSS のネイティブAAなら、画面と同じ解像度で輪郭を滑らかにできます。フレームレートを重視するなら、アップスケーリングを選んでください。
 
@@ -16,7 +16,7 @@
 
 ## インストール
 
-1. ゲームを終了し、[GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) から **REFRAME-P3R-v1.1.4.zip** をダウンロードします。
+1. ゲームを終了し、[GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) から **REFRAME-P3R-v1.1.5.zip** をダウンロードします。
 2. Steam で **Persona 3 Reload** を右クリックし、**プロパティ → インストール済みファイル → 参照**を選びます。
 3. `P3R` がすでに入っているフォルダーに ZIP を展開します。`P3R\Binaries\Win64` の `P3R.exe` と同じ場所に `d3d12.dll` が入ります。
 4. いつもどおり Steam からゲームを起動します。
@@ -73,7 +73,7 @@ ZIP には MOD 本体と必要なグラフィック用ライブラリが入っ�
 
 ## 動作要件
 
-RE:FRAME には Steam で正規に購入した Persona 3 Reload、Windows 10 または 11 x64、DirectX 12 と対応するグラフィックドライバーが必要です。1.1.4 は **Steam ビルド 22672075**（アプリ ID **2161700**）向けです。
+RE:FRAME には Steam で正規に購入した Persona 3 Reload、Windows 10 または 11 x64、DirectX 12 と対応するグラフィックドライバーが必要です。1.1.5 は **Steam ビルド 22672075**（アプリ ID **2161700**）向けです。
 
 ### 対応グラフィックカード
 

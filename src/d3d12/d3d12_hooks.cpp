@@ -2,6 +2,8 @@
 #include "settings.hpp"
 #include "renderer.hpp"
 #include "native_menu.hpp"
+#include "engine_variables.hpp"
+#include "town_map_view.hpp"
 #include "d3d12_detour.hpp"
 #include "d3d12_slots.h"
 #include <wrl/client.h>
@@ -27,6 +29,8 @@ using Microsoft::WRL::ComPtr;
 namespace reframe {
 namespace {
 constexpr GUID taa_marker{0xaf2f743e,0x4af5,0x4b11,{0x8e,0x1d,0xe6,0x3e,0x93,0xcb,0xd0,0x29}};
+constexpr GUID town_map_material_marker{0xf7462ac2,0x3275,0x48a1,{0xad,0x9a,0xd9,0x17,0x46,0xc0,0x0b,0x50}};
+constexpr GUID town_map_root_marker{0x712c9986,0x0eca,0x44bc,{0x8f,0x33,0x6b,0xc0,0x28,0xe0,0x3d,0x88}};
 constexpr GUID root_marker{0xff134b13,0x0864,0x42cf,{0x9e,0x2b,0x61,0xdd,0x38,0x4f,0x4c,0x11}};
 constexpr GUID lifetime_marker{0x7280fd07,0x15e4,0x4c92,{0x83,0x41,0x55,0x3d,0x56,0xa3,0x6d,0xdb}};
 constexpr GUID indirect_marker{0xf311218d,0x6e3e,0x4e56,{0x9b,0xbf,0xea,0xbb,0x61,0x60,0x10,0x28}};
@@ -36,7 +40,6 @@ thread_local bool internal = false;
 std::atomic_bool hooks_active{false};
 std::atomic<ID3D12Device*> active_device{nullptr};
 std::recursive_mutex install_mutex;
-
 void FirstCall(const char* message, std::atomic_bool& seen) {
     if (!seen.exchange(true, std::memory_order_relaxed)) Log("%s", message);
 }
@@ -61,9 +64,21 @@ struct RootSlots {
     UINT view = unknown;
 };
 
+struct TownMapRoot {
+    UINT pixel_view = unknown;
+    UINT pixel_params = unknown;
+    UINT pixel_input = unknown;
+    UINT pixel_input_offset = 0;
+};
+
 struct CommandState {
     ID3D12PipelineState* pipeline = nullptr;
     ID3D12RootSignature* compute_root = nullptr;
+    ID3D12RootSignature* graphics_root = nullptr;
+    D3D12_VIEWPORT viewport{};
+    D3D12_RECT scissor{};
+    D3D12_CPU_DESCRIPTOR_HANDLE color_target{};
+    std::array<D3D12_GPU_VIRTUAL_ADDRESS, slots> graphics_cbvs{};
     std::array<ID3D12DescriptorHeap*, 2> heaps{};
     UINT heap_count = 0;
     ShaderIdentity shader;
@@ -85,11 +100,18 @@ struct Buffer {
     UINT64 size;
 };
 
+struct TownMapSdkFrame {
+    uint32_t epoch = 0;
+    Size render, display;
+    ULONGLONG recorded_at = 0;
+};
+
 struct Registry {
     std::mutex mutex;
     std::unordered_map<ID3D12GraphicsCommandList*, CommandState> lists;
     std::map<SIZE_T, Heap> heaps;
     std::map<D3D12_GPU_VIRTUAL_ADDRESS, Buffer> buffers;
+    TownMapSdkFrame town_map_frame;
 };
 
 // The callbacks can run when the process tears down D3D12 objects.
@@ -362,21 +384,22 @@ template<typename T> struct alignas(void*) Subobject {
 };
 #pragma warning(pop)
 
-D3D12_SHADER_BYTECODE StreamComputeShader(const D3D12_PIPELINE_STATE_STREAM_DESC& stream) {
+D3D12_SHADER_BYTECODE StreamShader(const D3D12_PIPELINE_STATE_STREAM_DESC& stream,
+                                  D3D12_PIPELINE_STATE_SUBOBJECT_TYPE stage = D3D12_PIPELINE_STATE_SUBOBJECT_TYPE_CS) {
     const auto* bytes = static_cast<const uint8_t*>(stream.pPipelineStateSubobjectStream);
     if (!bytes) return {};
     for (size_t offset = 0; offset + sizeof(D3D12_PIPELINE_STATE_SUBOBJECT_TYPE) <= stream.SizeInBytes;) {
         D3D12_PIPELINE_STATE_SUBOBJECT_TYPE type;
         std::memcpy(&type, bytes + offset, sizeof(type));
         size_t size = 0;
-        // Compute-only pipeline streams contain the following subobjects.
-        switch (type) {
-        case D3D12_PIPELINE_STATE_SUBOBJECT_TYPE_CS: {
-            Subobject<D3D12_SHADER_BYTECODE> compute{};
-            if (sizeof(compute) > stream.SizeInBytes - offset) return {};
-            std::memcpy(&compute, bytes + offset, sizeof(compute));
-            return compute.value;
+        if (type == stage) {
+            Subobject<D3D12_SHADER_BYTECODE> shader{};
+            if (sizeof(shader) > stream.SizeInBytes - offset) return {};
+            std::memcpy(&shader, bytes + offset, sizeof(shader));
+            return shader.value;
         }
+        switch (type) {
+        case D3D12_PIPELINE_STATE_SUBOBJECT_TYPE_CS: size = sizeof(Subobject<D3D12_SHADER_BYTECODE>); break;
         case D3D12_PIPELINE_STATE_SUBOBJECT_TYPE_ROOT_SIGNATURE: size = sizeof(Subobject<ID3D12RootSignature*>); break;
         case D3D12_PIPELINE_STATE_SUBOBJECT_TYPE_NODE_MASK: size = sizeof(Subobject<UINT>); break;
         case D3D12_PIPELINE_STATE_SUBOBJECT_TYPE_CACHED_PSO: size = sizeof(Subobject<D3D12_CACHED_PIPELINE_STATE>); break;
@@ -412,6 +435,52 @@ D3D12_SHADER_BYTECODE StreamComputeShader(const D3D12_PIPELINE_STATE_STREAM_DESC
     return {};
 }
 
+void MarkTownMapPipeline(D3D12_SHADER_BYTECODE vs, D3D12_SHADER_BYTECODE ps,
+                         void** out, HRESULT result) noexcept {
+    // The city map blur/vignette material uses this full-screen shader pair.
+    if (vs.BytecodeLength != 2078 || ps.BytecodeLength != 3674 ||
+        Identify(vs).digest != Sha256("c9925566d858d1d46e6aa27d595755dda19c72337eb6bb1b4a2c80f57f4f94b3") ||
+        Identify(ps).digest != Sha256("921004347df81c4a0b0e62e7826c2732f9952b024185859d7ef62327cc2a24f5")) return;
+    if (const auto pipeline = Returned<ID3D12PipelineState>(out, result)) {
+        const uint8_t yes = 1;
+        if (SUCCEEDED(pipeline->SetPrivateData(town_map_material_marker, sizeof(yes), &yes))) {
+            static std::atomic_bool seen{false};
+            FirstCall("Recognized the city map blur/vignette shader pair.", seen);
+        }
+    }
+}
+
+void MarkTownMapRoot(ID3D12RootSignature* signature, const D3D12_ROOT_SIGNATURE_DESC& root) {
+    TownMapRoot found;
+    for (UINT slot = 0; slot < root.NumParameters; ++slot) {
+        const auto& parameter = root.pParameters[slot];
+        const bool pixel = parameter.ShaderVisibility == D3D12_SHADER_VISIBILITY_PIXEL ||
+                           parameter.ShaderVisibility == D3D12_SHADER_VISIBILITY_ALL;
+        if (pixel && parameter.ParameterType == D3D12_ROOT_PARAMETER_TYPE_CBV &&
+            parameter.Descriptor.RegisterSpace == 0) {
+            if (parameter.Descriptor.ShaderRegister == 0) found.pixel_params = slot;
+            if (parameter.Descriptor.ShaderRegister == 1) found.pixel_view = slot;
+        }
+        if (!pixel || parameter.ParameterType != D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE) continue;
+        UINT next = 0;
+        for (UINT r = 0; r < parameter.DescriptorTable.NumDescriptorRanges; ++r) {
+            const auto& range = parameter.DescriptorTable.pDescriptorRanges[r];
+            const UINT first = range.OffsetInDescriptorsFromTableStart == D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+                ? next : range.OffsetInDescriptorsFromTableStart;
+            if (first > 128) break;
+            if (range.RangeType == D3D12_DESCRIPTOR_RANGE_TYPE_SRV &&
+                range.BaseShaderRegister == 0 && range.RegisterSpace == 0 && range.NumDescriptors) {
+                found.pixel_input = slot;
+                found.pixel_input_offset = first;
+            }
+            if (range.NumDescriptors > 128U - first) break;
+            next = first + range.NumDescriptors;
+        }
+    }
+    if (found.pixel_view != unknown && found.pixel_params != unknown && found.pixel_input != unknown)
+        signature->SetPrivateData(town_map_root_marker, sizeof(found), &found);
+}
+
 void MarkRoot(const void* bytes, SIZE_T size, void** out, HRESULT status) {
     if (!bytes || FAILED(status) || !out || !*out) return;
     using Deserialize = decltype(&D3D12CreateVersionedRootSignatureDeserializer);
@@ -439,9 +508,11 @@ void MarkRoot(const void* bytes, SIZE_T size, void** out, HRESULT status) {
         if (range.RangeType == D3D12_DESCRIPTOR_RANGE_TYPE_SRV && range.NumDescriptors >= 6) found.srv = i;
         if (range.RangeType == D3D12_DESCRIPTOR_RANGE_TYPE_UAV && range.NumDescriptors >= 1) found.uav = i;
     }
-    if (found.srv != unknown && found.uav != unknown && found.globals != unknown && found.view != unknown)
-        if (const auto signature = Returned<ID3D12RootSignature>(out, status))
-            signature->SetPrivateData(root_marker, sizeof(found), &found);
+    const bool taa = found.srv != unknown && found.uav != unknown && found.globals != unknown && found.view != unknown;
+    if (const auto signature = Returned<ID3D12RootSignature>(out, status)) {
+        if (taa) signature->SetPrivateData(root_marker, sizeof(found), &found);
+        MarkTownMapRoot(signature.Get(), root);
+    }
 }
 
 bool Texture(View view, DXGI_FORMAT format, Size* size = nullptr) {
@@ -521,6 +592,11 @@ uint32_t WholePhase(float value, uint32_t low, uint32_t high) {
     const auto integral = static_cast<uint32_t>(value);
     return value == integral ? integral : 0;
 }
+}
+
+bool TownMapRootBindings(ID3D12RootSignature* root, TownMapRoot& bindings) {
+    UINT size = sizeof(bindings);
+    return root && SUCCEEDED(root->GetPrivateData(town_map_root_marker, &size, &bindings));
 }
 
 const char* ReadFrame(Registry& state, const CommandState& command, GameFrame& game, UINT x, UINT y, UINT z) {
@@ -657,10 +733,27 @@ HOOK(HRESULT, PipelineStream, (ID3D12Device2* dev, const D3D12_PIPELINE_STATE_ST
     const HRESULT result = OriginalPipelineStream(dev, desc, iid, out);
     if (!internal && hooks_active && desc && SUCCEEDED(result)) {
         static std::atomic_bool seen{false};
-        const auto shader = StreamComputeShader(*desc);
+        const auto shader = StreamShader(*desc);
         FirstCall("Game called ID3D12Device2::CreatePipelineState.", seen);
-        MarkPipeline("CreatePipelineState", shader, out, result);
+        if (shader.pShaderBytecode) MarkPipeline("CreatePipelineState", shader, out, result);
+        else
+            MarkTownMapPipeline(StreamShader(*desc, D3D12_PIPELINE_STATE_SUBOBJECT_TYPE_VS),
+                                    StreamShader(*desc, D3D12_PIPELINE_STATE_SUBOBJECT_TYPE_PS), out, result);
     }
+    return result;
+}
+
+HOOK(HRESULT, GraphicsPipeline, (ID3D12Device* dev, const D3D12_GRAPHICS_PIPELINE_STATE_DESC* desc,
+                                REFIID iid, void** out)) {
+    const auto result = OriginalGraphicsPipeline(dev, desc, iid, out);
+    if (!internal && hooks_active && desc && SUCCEEDED(result)) MarkTownMapPipeline(desc->VS, desc->PS, out, result);
+    return result;
+}
+
+HOOK(HRESULT, LibraryGraphics, (ID3D12PipelineLibrary* library, LPCWSTR name,
+                               const D3D12_GRAPHICS_PIPELINE_STATE_DESC* desc, REFIID iid, void** out)) {
+    const auto result = OriginalLibraryGraphics(library, name, desc, iid, out);
+    if (!internal && hooks_active && desc && SUCCEEDED(result)) MarkTownMapPipeline(desc->VS, desc->PS, out, result);
     return result;
 }
 
@@ -674,7 +767,13 @@ HOOK(HRESULT, LibraryCompute, (ID3D12PipelineLibrary* library, LPCWSTR name,
 HOOK(HRESULT, LibraryStream, (ID3D12PipelineLibrary1* library, LPCWSTR name,
                               const D3D12_PIPELINE_STATE_STREAM_DESC* desc, REFIID iid, void** out)) {
     const auto result = OriginalLibraryStream(library, name, desc, iid, out);
-    if (!internal && hooks_active && desc && SUCCEEDED(result)) MarkPipeline("LoadPipeline", StreamComputeShader(*desc), out, result);
+    if (!internal && hooks_active && desc && SUCCEEDED(result)) {
+        const auto shader = StreamShader(*desc);
+        if (shader.pShaderBytecode) MarkPipeline("LoadPipeline", shader, out, result);
+        else
+            MarkTownMapPipeline(StreamShader(*desc, D3D12_PIPELINE_STATE_SUBOBJECT_TYPE_VS),
+                                    StreamShader(*desc, D3D12_PIPELINE_STATE_SUBOBJECT_TYPE_PS), out, result);
+    }
     return result;
 }
 
@@ -713,7 +812,9 @@ HOOK(HRESULT, RootSignature, (ID3D12Device* dev, UINT mask, const void* bytes, S
 
 HOOK(HRESULT, Heap, (ID3D12Device* dev, const D3D12_DESCRIPTOR_HEAP_DESC* desc, REFIID iid, void** out)) {
     const HRESULT result = OriginalHeap(dev, desc, iid, out);
-    if (internal || !hooks_active || !desc || desc->Type != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) return result;
+    if (internal || !hooks_active || !desc) return result;
+    if (desc->Type != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV &&
+        desc->Type != D3D12_DESCRIPTOR_HEAP_TYPE_RTV) return result;
     try {
         if (const auto heap = Returned<ID3D12DescriptorHeap>(out, result)) {
             const SIZE_T cpu = heap->GetCPUDescriptorHandleForHeapStart().ptr;
@@ -735,6 +836,12 @@ HOOK(void, Srv, (ID3D12Device* dev, ID3D12Resource* resource, const D3D12_SHADER
     if (!internal && hooks_active) SetView(dest, {resource, desc ? desc->Format : resource ? resource->GetDesc().Format : DXGI_FORMAT_UNKNOWN});
 }
 
+HOOK(void, Rtv, (ID3D12Device* dev, ID3D12Resource* resource, const D3D12_RENDER_TARGET_VIEW_DESC* desc,
+                D3D12_CPU_DESCRIPTOR_HANDLE dest)) {
+    OriginalRtv(dev, resource, desc, dest);
+    if (!internal && hooks_active) SetView(dest, {resource, desc ? desc->Format : resource ? resource->GetDesc().Format : DXGI_FORMAT_UNKNOWN});
+}
+
 HOOK(void, Uav, (ID3D12Device* dev, ID3D12Resource* resource, ID3D12Resource* counter,
                 const D3D12_UNORDERED_ACCESS_VIEW_DESC* desc, D3D12_CPU_DESCRIPTOR_HANDLE dest)) {
     OriginalUav(dev, resource, counter, desc, dest);
@@ -749,7 +856,9 @@ HOOK(void, Cbv, (ID3D12Device* dev, const D3D12_CONSTANT_BUFFER_VIEW_DESC* desc,
 HOOK(void, CopySimple, (ID3D12Device* dev, UINT count, D3D12_CPU_DESCRIPTOR_HANDLE dest,
                        D3D12_CPU_DESCRIPTOR_HANDLE src, D3D12_DESCRIPTOR_HEAP_TYPE type)) {
     OriginalCopySimple(dev, count, dest, src, type);
-    if (internal || !hooks_active || type != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) return;
+    if (internal || !hooks_active ||
+        (type != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV &&
+         type != D3D12_DESCRIPTOR_HEAP_TYPE_RTV)) return;
     const UINT step = dev->GetDescriptorHandleIncrementSize(type);
     auto& state = State();
     std::lock_guard lock(state.mutex);
@@ -764,7 +873,9 @@ HOOK(void, Copy, (ID3D12Device* dev, UINT dest_count, const D3D12_CPU_DESCRIPTOR
                  UINT src_count, const D3D12_CPU_DESCRIPTOR_HANDLE* src, const UINT* src_sizes,
                  D3D12_DESCRIPTOR_HEAP_TYPE type)) {
     OriginalCopy(dev, dest_count, dest, dest_sizes, src_count, src, src_sizes, type);
-    if (internal || !hooks_active || type != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) return;
+    if (internal || !hooks_active ||
+        (type != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV &&
+         type != D3D12_DESCRIPTOR_HEAP_TYPE_RTV)) return;
     const UINT step = dev->GetDescriptorHandleIncrementSize(type);
     auto& state = State();
     std::lock_guard lock(state.mutex);
@@ -907,7 +1018,11 @@ HOOK(void, ComputeRoot, (ID3D12GraphicsCommandList* list, ID3D12RootSignature* r
 
 HOOK(void, GraphicsRoot, (ID3D12GraphicsCommandList* list, ID3D12RootSignature* root)) {
     OriginalGraphicsRoot(list, root);
-    TrackCommand(list, [&](CommandState& cmd) { cmd.graphics_tables = {}; });
+    TrackCommand(list, [&](CommandState& cmd) {
+        cmd.graphics_root = root;
+        cmd.graphics_tables = {};
+        cmd.graphics_cbvs = {};
+    });
 }
 
 HOOK(void, ComputeTable, (ID3D12GraphicsCommandList* list, UINT slot, D3D12_GPU_DESCRIPTOR_HANDLE address)) {
@@ -925,6 +1040,129 @@ HOOK(void, ComputeCbv, (ID3D12GraphicsCommandList* list, UINT slot, D3D12_GPU_VI
     if (slot < slots) TrackCommand(list, [&](CommandState& cmd) { cmd.compute_cbvs[slot] = address; });
 }
 
+HOOK(void, GraphicsCbv, (ID3D12GraphicsCommandList* list, UINT slot, D3D12_GPU_VIRTUAL_ADDRESS address)) {
+    OriginalGraphicsCbv(list, slot, address);
+    if (TownMapEpoch() && slot < slots) TrackCommand(list, [&](CommandState& cmd) {
+        cmd.graphics_cbvs[slot] = address;
+    });
+}
+
+HOOK(void, RasterViewports, (ID3D12GraphicsCommandList* list, UINT count, const D3D12_VIEWPORT* viewports)) {
+    OriginalRasterViewports(list, count, viewports);
+    if (TownMapEpoch()) TrackCommand(list, [&](CommandState& cmd) {
+        cmd.viewport = count == 1 && viewports ? viewports[0] : D3D12_VIEWPORT{};
+    });
+}
+
+HOOK(void, RasterScissors, (ID3D12GraphicsCommandList* list, UINT count, const D3D12_RECT* rects)) {
+    OriginalRasterScissors(list, count, rects);
+    if (TownMapEpoch()) TrackCommand(list, [&](CommandState& cmd) {
+        cmd.scissor = count == 1 && rects ? rects[0] : D3D12_RECT{};
+    });
+}
+
+HOOK(void, RenderTargets, (ID3D12GraphicsCommandList* list, UINT count, const D3D12_CPU_DESCRIPTOR_HANDLE* rtvs,
+                           BOOL contiguous, const D3D12_CPU_DESCRIPTOR_HANDLE* dsv)) {
+    OriginalRenderTargets(list, count, rtvs, contiguous, dsv);
+    if (TownMapEpoch()) TrackCommand(list, [&](CommandState& cmd) {
+        cmd.color_target = count && rtvs ? rtvs[0] : D3D12_CPU_DESCRIPTOR_HANDLE{};
+    });
+}
+
+struct TownMapRootPatch {
+    TownMapViewConstants view;
+    D3D12_GPU_VIRTUAL_ADDRESS original = 0;
+    UINT slot = unknown;
+    uint32_t epoch = 0;
+    Size render, display;
+};
+
+TownMapRootPatch ReadTownMapRootPatch(ID3D12GraphicsCommandList* list) {
+    const uint32_t epoch = TownMapEpoch();
+    if (internal || !epoch) return {};
+    auto& state = State();
+    std::lock_guard lock(state.mutex);
+    const auto& frame = state.town_map_frame;
+    if (frame.epoch != epoch || GetTickCount64() - frame.recorded_at > 250) return {};
+    const auto found = state.lists.find(list);
+    if (found == state.lists.end()) return {};
+    const auto& cmd = found->second;
+    uint8_t marker = 0;
+    UINT marker_size = sizeof(marker);
+    if (!cmd.pipeline || FAILED(cmd.pipeline->GetPrivateData(town_map_material_marker, &marker_size, &marker)) || !marker)
+        return {};
+    const auto& vp = cmd.viewport;
+    const auto& sc = cmd.scissor;
+    if (vp.TopLeftX != 0 || vp.TopLeftY != 0 || vp.Width != frame.display.width || vp.Height != frame.display.height ||
+        sc.left != 0 || sc.top != 0 || sc.right != static_cast<LONG>(frame.display.width) ||
+        sc.bottom != static_cast<LONG>(frame.display.height)) return {};
+
+    const auto* target = CpuView(state, cmd.color_target.ptr);
+    Size extent;
+    if (!target || !Texture(*target, target->format, &extent) || extent != frame.display) return {};
+    TownMapRoot root;
+    static uint32_t reported_mismatch = 0;
+    if (!TownMapRootBindings(cmd.graphics_root, root) || root.pixel_view >= slots ||
+        root.pixel_params >= slots || root.pixel_input >= slots) {
+        if (reported_mismatch != epoch) {
+            reported_mismatch = epoch;
+            Log("TownMap %u background material has an unsupported pixel root layout.", epoch);
+        }
+        return {};
+    }
+    const auto source = GpuView(state, cmd, cmd.graphics_tables[root.pixel_input], root.pixel_input_offset);
+    if (!Texture(source, source.format, &extent) || extent != frame.display) return {};
+
+    // Match the material's own output rectangle in its pixel b0 block.
+    std::array<uint32_t, 4> origin;
+    std::array<float, 4> output;
+    const auto params = cmd.graphics_cbvs[root.pixel_params];
+    if (!ReadBuffer(state, params, 37 * 16, &origin, sizeof(origin)) ||
+        !ReadBuffer(state, params, 38 * 16, &output, sizeof(output)) || origin[0] || origin[1] ||
+        !MatchesInverseExtent(output[2], output[3], frame.display)) return {};
+
+    TownMapRootPatch patch;
+    patch.original = cmd.graphics_cbvs[root.pixel_view];
+    if (!ReadBuffer(state, patch.original, 0, &patch.view, sizeof(patch.view))) return {};
+    const auto old_view = patch.view.view_size;
+    const auto old_buffer = patch.view.buffer_size;
+    if (!CorrectTownMapView(patch.view, frame.render, frame.display)) {
+        if (reported_mismatch != epoch) {
+            reported_mismatch = epoch;
+            Log("TownMap %u background material view tuple mismatch: View %.0fx%.0f, buffer %.0fx%.0f, expected input %ux%u.",
+                epoch, old_view[0], old_view[1], old_buffer[0], old_buffer[1], frame.render.width, frame.render.height);
+        }
+        return {};
+    }
+    patch.slot = root.pixel_view;
+    patch.epoch = epoch;
+    patch.render = frame.render;
+    patch.display = frame.display;
+    return patch;
+}
+
+HOOK(void, DrawIndices, (ID3D12GraphicsCommandList* list, UINT count, UINT instances, UINT first, INT base, UINT first_instance)) {
+    try {
+        if (count == 3 && instances == 1) {
+            const auto patch = ReadTownMapRootPatch(list);
+            if (patch.original) {
+                Scope scope;
+                if (const auto address = CopyTownMapView(list, patch.view)) {
+                    list->SetGraphicsRootConstantBufferView(patch.slot, address);
+                    OriginalDrawIndices(list, count, instances, first, base, first_instance);
+                    list->SetGraphicsRootConstantBufferView(patch.slot, patch.original);
+                    if (NotifyTownMapCorrected(patch.epoch))
+                        Log("TownMap %u background material corrected at root %u: %ux%u -> %ux%u.",
+                            patch.epoch, patch.slot, patch.render.width, patch.render.height,
+                            patch.display.width, patch.display.height);
+                    return;
+                }
+            }
+        }
+    } catch (...) {}
+    OriginalDrawIndices(list, count, instances, first, base, first_instance);
+}
+
 HOOK(void, Dispatch, (ID3D12GraphicsCommandList* list, UINT x, UINT y, UINT z)) {
     if (!internal && hooks_active) {
         static std::atomic_bool seen{false};
@@ -934,6 +1172,7 @@ HOOK(void, Dispatch, (ID3D12GraphicsCommandList* list, UINT x, UINT y, UINT z)) 
         const char* reason = "untracked command list";
         bool recognized = false;
         bool candidate = false;
+        uint32_t map_epoch = 0;
         {
             auto& state = State();
             std::lock_guard lock(state.mutex);
@@ -945,8 +1184,10 @@ HOOK(void, Dispatch, (ID3D12GraphicsCommandList* list, UINT x, UINT y, UINT z)) 
                     (!shader.threads[0] || shader.threads == std::array<UINT, 3>{8, 8, 1});
                 if (recognized || candidate) {
                     snapshot = it->second;
+                    if (recognized) map_epoch = TownMapEpoch();
                     reason = ReadFrame(state, snapshot, game, x, y, z);
                 }
+
             }
         }
         if (recognized || candidate) {
@@ -960,16 +1201,21 @@ HOOK(void, Dispatch, (ID3D12GraphicsCommandList* list, UINT x, UINT y, UINT z)) 
                     digest.c_str(), snapshot.direct ? "direct" : "compute", static_cast<void*>(list),
                     reason ? reason : "main-view inputs validated");
         }
+        bool replaced = false;
         ComPtr<ID3D12Device> device;
         if (recognized && !reason && snapshot.direct && active_device &&
             SUCCEEDED(list->GetDevice(IID_PPV_ARGS(&device))) && device.Get() == active_device) {
             Scope scope;
-            bool replaced = false;
             try { replaced = RenderUpscaled(list, game); }
             catch (...) { hooks_active = false; }
             Restore(list, snapshot);
-            if (replaced) return;
         }
+        if (replaced && map_epoch) {
+            auto& state = State();
+            std::lock_guard lock(state.mutex);
+            state.town_map_frame = {map_epoch, game.frame.render, game.frame.display, GetTickCount64()};
+        }
+        if (replaced) return;
     }
     OriginalDispatch(list, x, y, z);
 }
@@ -1033,6 +1279,15 @@ void AttachCommandList(ID3D12GraphicsCommandList* list) {
     INSTALL(list, graphics_table, GraphicsTable);
     INSTALL(list, compute_cbv, ComputeCbv);
     INSTALL(list, indirect, Indirect);
+    if (list->GetType() == D3D12_COMMAND_LIST_TYPE_DIRECT) {
+        bool map_hooks_ok = true;
+        map_hooks_ok &= RouteRasterViewports::Install(list, d3d12_slots.raster_viewports, "RasterViewports");
+        map_hooks_ok &= RouteRasterScissors::Install(list, d3d12_slots.raster_scissors, "RasterScissors");
+        map_hooks_ok &= RouteRenderTargets::Install(list, d3d12_slots.render_targets, "RenderTargets");
+        map_hooks_ok &= RouteDrawIndices::Install(list, d3d12_slots.draw_indices, "DrawIndices");
+        map_hooks_ok &= RouteGraphicsCbv::Install(list, d3d12_slots.graphics_cbv, "GraphicsCbv");
+        if (!map_hooks_ok) Log("City map background hooks are incomplete.");
+    }
     if (!ok || MH_ApplyQueued() != MH_OK) {
         hooks_active = false;
         Log("Command list implementation could not be tracked; using Original TAA.");
@@ -1043,6 +1298,8 @@ void AttachPipelineLibrary(ID3D12PipelineLibrary* library) {
     std::lock_guard lock(install_mutex);
     bool ok = true;
     INSTALL(library, library_compute, LibraryCompute);
+    if (!RouteLibraryGraphics::Install(library, d3d12_slots.library_graphics, "LibraryGraphics"))
+        Log("City map graphics library instrumentation is incomplete.");
     ComPtr<ID3D12PipelineLibrary1> version;
     if (SUCCEEDED(library->QueryInterface(IID_PPV_ARGS(&version)))) { INSTALL(version.Get(), library_stream, LibraryStream); }
     if (!ok || MH_ApplyQueued() != MH_OK) Log("Unable to track a pipeline library implementation.");
@@ -1115,11 +1372,15 @@ void AttachRenderer(ID3D12Device* device) noexcept {
         const auto device_methods = [&](ID3D12Device* entry) {
             INSTALL(entry, create_queue, CreateQueue);
             INSTALL(entry, compute_pipeline, ComputePipeline);
+            if (!RouteGraphicsPipeline::Install(entry, d3d12_slots.graphics_pipeline, "GraphicsPipeline"))
+                Log("City map graphics pipeline instrumentation is incomplete.");
             INSTALL(entry, create_list, CreateList);
             INSTALL(entry, heap, Heap);
             INSTALL(entry, root_signature, RootSignature);
             INSTALL(entry, cbv, Cbv);
             INSTALL(entry, srv, Srv);
+            if (!RouteRtv::Install(entry, d3d12_slots.rtv, "Rtv"))
+                Log("City map render target instrumentation is incomplete.");
             INSTALL(entry, uav, Uav);
             INSTALL(entry, copy, Copy);
             INSTALL(entry, copy_simple, CopySimple);
@@ -1155,6 +1416,7 @@ void AttachRenderer(ID3D12Device* device) noexcept {
         }
         hooks_active = true;
         Log("Direct3D 12 device tracking enabled; command lists and pipeline libraries will be tracked as created.");
+
     } catch (...) {
         Log("Renderer initialization failed; using Original TAA.");
     }

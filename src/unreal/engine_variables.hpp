@@ -15,4 +15,6 @@ EngineVariables BindEngineVariables();
 bool InstallGameplayScreenPercentage();
 bool SetGameplayScreenPercentage(float percentage);
 float GameplayScreenPercentage();
+uint32_t TownMapEpoch();
+bool NotifyTownMapCorrected(uint32_t epoch);
 }

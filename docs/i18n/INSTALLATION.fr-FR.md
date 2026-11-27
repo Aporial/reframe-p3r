@@ -1,10 +1,10 @@
-# RE:FRAME — Persona 3 Reload 1.1.4
+# RE:FRAME — Persona 3 Reload 1.1.5
 
 Par Aporia. Pour une copie de Persona 3 Reload acquise légalement sur Steam, ID **2161700**, build **22672075**. Windows x64 et DirectX 12 requis.
 
 ## Nouveautés
 
-La carte de la ville utilise l’échelle de rendu du jeu pour que le décor 3D occupe tout l’espace prévu. Le mode de mise à l’échelle sélectionné reprend à la fermeture de la carte.
+La carte de la ville peut utiliser le mode de mise à l’échelle DLSS, FSR ou XeSS sélectionné. Si RE:FRAME ne peut pas corriger le décor 3D, la carte reprend l’échelle du jeu jusqu’à sa fermeture.
 
 La **Netteté** utilise FidelityFX CAS pour accentuer les détails après la reconstruction DLAA, DLSS, FSR ou XeSS, avant le dessin du HUD. Le réglage va de 0 % (désactivé par défaut) à 100 % par pas de 5 %. Appliquez le changement dans le menu Graphismes. Il prend effet sans redémarrer et la valeur est commune aux technologies et modes de qualité. Le TAA d’origine masque le réglage.
 
@@ -12,7 +12,7 @@ La **Netteté** utilise FidelityFX CAS pour accentuer les détails après la rec
 
 1. Fermez le jeu. Dans Steam, ouvrez **Propriétés → Fichiers installés → Parcourir**.
 2. Si `P3R\Binaries\Win64` contient déjà un `d3d12.dll`, suivez la procédure de désinstallation du mod qui l’a installé. Pour mettre à jour RE:FRAME, exécutez d’abord `Remove-ReFrame.ps1` de la version précédente, puis extrayez le nouveau ZIP.
-3. Comparez le SHA-256 du ZIP avec le fichier `.sha256` fourni. Extrayez **REFRAME-P3R-v1.1.4.zip** dans le dossier qui contient `P3R`. Lancez le jeu dans Steam et choisissez la technologie, le mode de qualité et la netteté dans le menu Graphismes.
+3. Comparez le SHA-256 du ZIP avec le fichier `.sha256` fourni. Extrayez **REFRAME-P3R-v1.1.5.zip** dans le dossier qui contient `P3R`. Lancez le jeu dans Steam et choisissez la technologie, le mode de qualité et la netteté dans le menu Graphismes.
 
 Conservez `ReFrame\Settings.ini` pour retrouver vos réglages. Après une version de développement plus ancienne, conservez `P3RGraphicsEnhanced\Settings.ini` jusqu’à ce que RE:FRAME écrive dans le nouveau dossier. XeSS nécessite le redistribuable Microsoft Visual C++ x64 14.40.33810 ou ultérieur.
 

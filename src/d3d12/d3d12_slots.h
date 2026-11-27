@@ -41,6 +41,14 @@ typedef struct D3d12Slots {
     size_t sdk_factory;
     size_t create_queue;
     size_t execute_lists;
+    size_t rtv;
+    size_t raster_viewports;
+    size_t raster_scissors;
+    size_t render_targets;
+    size_t draw_indices;
+    size_t graphics_pipeline;
+    size_t library_graphics;
+    size_t graphics_cbv;
 } D3d12Slots;
 
 extern const D3d12Slots d3d12_slots;

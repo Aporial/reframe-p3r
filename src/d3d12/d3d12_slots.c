@@ -47,5 +47,13 @@ const D3d12Slots d3d12_slots = {
     SLOT(ID3D12DeviceFactory, CreateDevice),
     SLOT(ID3D12SDKConfiguration1, CreateDeviceFactory),
     DEVICE(CreateCommandQueue),
-    SLOT(ID3D12CommandQueue, ExecuteCommandLists)
+    SLOT(ID3D12CommandQueue, ExecuteCommandLists),
+    DEVICE(CreateRenderTargetView),
+    LIST(RSSetViewports),
+    LIST(RSSetScissorRects),
+    LIST(OMSetRenderTargets),
+    LIST(DrawIndexedInstanced),
+    DEVICE(CreateGraphicsPipelineState),
+    SLOT(ID3D12PipelineLibrary, LoadGraphicsPipeline),
+    LIST(SetGraphicsRootConstantBufferView)
 };

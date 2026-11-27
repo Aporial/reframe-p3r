@@ -1,10 +1,10 @@
-# RE:FRAME — Persona 3 Reload 1.1.4
+# RE:FRAME — Persona 3 Reload 1.1.5
 
 Autor to Aporia. Wymagana jest legalnie kupiona na Steam kopia Persona 3 Reload, ID aplikacji **2161700**, kompilacja **22672075**, a także Windows x64 i DirectX 12.
 
 ## Co nowego
 
-Mapa miasta korzysta ze skali renderowania gry, dzięki czemu tło 3D wypełnia cały obszar mapy. Po zamknięciu mapy gra wraca do wybranego trybu skalowania obrazu.
+Mapa miasta może korzystać z wybranego trybu skalowania obrazu DLSS, FSR lub XeSS. Jeśli RE:FRAME nie może skorygować tła 3D, mapa wraca do skali renderowania gry aż do zamknięcia.
 
 **Ostrość** używa FidelityFX CAS, aby zmieniać szczegółowość po rekonstrukcji DLAA, DLSS, FSR lub XeSS i przed rysowaniem HUD-u. Zakres wynosi od 0% (domyślnie wyłączona) do 100% co 5%. Zastosuj zmianę w menu grafiki. Działa bez ponownego uruchamiania, a wartość jest wspólna dla technologii i trybów jakości. Oryginalne TAA ukrywa ten element.
 
@@ -12,7 +12,7 @@ Mapa miasta korzysta ze skali renderowania gry, dzięki czemu tło 3D wypełnia 
 
 1. Zamknij grę. W Steam wybierz **Właściwości → Zainstalowane pliki → Przeglądaj**.
 2. Jeśli w `P3R\Binaries\Win64` jest już `d3d12.dll`, postępuj zgodnie z instrukcją usuwania moda korzystającego z tego pliku. Aby zaktualizować RE:FRAME, uruchom `Remove-ReFrame.ps1` z poprzedniej wersji, a następnie rozpakuj nowy plik ZIP.
-3. Porównaj SHA-256 archiwum z plikiem `.sha256`. Rozpakuj **REFRAME-P3R-v1.1.4.zip** w folderze zawierającym `P3R`. Uruchom grę przez Steam i wybierz technologię, tryb jakości oraz ostrość w menu grafiki.
+3. Porównaj SHA-256 archiwum z plikiem `.sha256`. Rozpakuj **REFRAME-P3R-v1.1.5.zip** w folderze zawierającym `P3R`. Uruchom grę przez Steam i wybierz technologię, tryb jakości oraz ostrość w menu grafiki.
 
 Zachowaj `ReFrame\Settings.ini`, aby zachować ustawienia. Przy aktualizacji ze starszej wersji rozwojowej zachowaj `P3RGraphicsEnhanced\Settings.ini`, aż RE:FRAME zapisze ustawienia w nowym folderze. XeSS wymaga pakietu Microsoft Visual C++ Redistributable x64 14.40.33810 lub nowszego.
 

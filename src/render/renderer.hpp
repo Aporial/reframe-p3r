@@ -3,6 +3,7 @@
 #include <array>
 
 namespace reframe {
+struct TownMapViewConstants;
 struct View {
     ID3D12Resource* resource = nullptr;
     DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
@@ -33,9 +34,10 @@ RenderRecommendation RecommendMenuQuality(Technology technology, Quality quality
 bool ApplyMenuGraphics(Settings settings);
 bool InitializeUpscalers(ID3D12Device* device);
 bool RenderUpscaled(ID3D12GraphicsCommandList* list, GameFrame& frame);
+D3D12_GPU_VIRTUAL_ADDRESS CopyTownMapView(ID3D12GraphicsCommandList* list, const TownMapViewConstants& view);
 struct UpscaleSubmission {
     bool tracked = false;
-    uint32_t sharpness_targets = 0;
+    uint32_t scratch_targets = 0;
 };
 UpscaleSubmission BeginUpscaleSubmission(UINT count, ID3D12CommandList* const* lists) noexcept;
 void EndUpscaleSubmission(ID3D12CommandQueue* queue, UpscaleSubmission submission) noexcept;

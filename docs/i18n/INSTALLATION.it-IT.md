@@ -1,10 +1,10 @@
-# RE:FRAME — Persona 3 Reload 1.1.4
+# RE:FRAME — Persona 3 Reload 1.1.5
 
 Di Aporia. Per una copia di Persona 3 Reload acquistata legalmente su Steam, ID app **2161700**, build **22672075**. Richiede Windows x64 e DirectX 12.
 
 ## Novità
 
-La mappa della città usa la scala di rendering del gioco, così lo sfondo 3D occupa tutta l’area della mappa. Quando la chiudi, torna attiva la modalità di upscaling scelta.
+La mappa della città può usare la modalità di upscaling DLSS, FSR o XeSS selezionata. Se RE:FRAME non riesce a correggere lo sfondo 3D, la mappa torna alla scala del gioco fino alla chiusura.
 
 **Nitidezza** usa FidelityFX CAS per regolare i dettagli dopo la ricostruzione con DLAA, DLSS, FSR o XeSS e prima del disegno dell’HUD. Va da 0% (disattivata per impostazione predefinita) a 100% in passi del 5%. Applica la modifica nel menu Grafica. Ha effetto senza riavvio e il valore è condiviso tra tecnologie e modalità di qualità. Il TAA originale nasconde il controllo.
 
@@ -12,7 +12,7 @@ La mappa della città usa la scala di rendering del gioco, così lo sfondo 3D oc
 
 1. Chiudi il gioco. In Steam, apri **Proprietà → File installati → Sfoglia**.
 2. Se `P3R\Binaries\Win64` contiene già `d3d12.dll`, segui le istruzioni di rimozione della mod che lo usa. Per aggiornare RE:FRAME, esegui prima `Remove-ReFrame.ps1` della versione precedente e poi estrai il nuovo ZIP.
-3. Confronta lo SHA-256 dello ZIP con il file `.sha256` fornito. Estrai **REFRAME-P3R-v1.1.4.zip** nella cartella che contiene `P3R`. Avvia da Steam e imposta tecnologia, modalità qualità e nitidezza nel menu Grafica.
+3. Confronta lo SHA-256 dello ZIP con il file `.sha256` fornito. Estrai **REFRAME-P3R-v1.1.5.zip** nella cartella che contiene `P3R`. Avvia da Steam e imposta tecnologia, modalità qualità e nitidezza nel menu Grafica.
 
 Conserva `ReFrame\Settings.ini` per mantenere le impostazioni. Con una versione di sviluppo precedente, conserva `P3RGraphicsEnhanced\Settings.ini` fino a quando RE:FRAME salva nella nuova cartella. XeSS richiede Microsoft Visual C++ Redistributable x64 14.40.33810 o successivo.
 

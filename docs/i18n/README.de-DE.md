@@ -2,9 +2,9 @@
 
 [English](../../README.md) · [Français](README.fr-FR.md) · [Italiano](README.it-IT.md) · **[Deutsch](README.de-DE.md)** · [Español (España)](README.es-ES.md) · [日本語](README.ja-JP.md) · [한국어](README.ko-KR.md) · [Polski](README.pl-PL.md) · [Português (Brasil)](README.pt-BR.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [Türkçe](README.tr-TR.md) · [Українська](README.uk-UA.md)
 
-<!-- source-readme: 8deef3923bb5be1cd0937c169e899628281472fb -->
+<!-- source-readme: b12cefc126e3d34cc793adb23450c6fb1ae2ac13 -->
 
-![Version 1.1.4](https://img.shields.io/badge/release-1.1.4-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT-Lizenz](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+![Version 1.1.5](https://img.shields.io/badge/release-1.1.5-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT-Lizenz](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 Weniger Treppenkanten und Flimmern in **Persona 3 Reload**, ohne die Renderauflösung auf 200 % zu stellen. DLAA und natives AA mit FSR oder XeSS glätten Kanten in der Auflösung deines Bildschirms. Wenn du mehr Leistung möchtest, wähle einen Modus mit Hochskalierung.
 
@@ -16,7 +16,7 @@ Weniger Treppenkanten und Flimmern in **Persona 3 Reload**, ohne die Renderaufl�
 
 ## Installation
 
-1. Beende das Spiel und lade **REFRAME-P3R-v1.1.4.zip** über [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) herunter.
+1. Beende das Spiel und lade **REFRAME-P3R-v1.1.5.zip** über [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) herunter.
 2. Klicke in Steam mit der rechten Maustaste auf **Persona 3 Reload** und wähle **Eigenschaften → Installierte Dateien → Durchsuchen**.
 3. Entpacke die ZIP-Datei in den Ordner, der bereits `P3R` enthält. Das Archiv legt `d3d12.dll` in `P3R\Binaries\Win64` direkt neben `P3R.exe` ab.
 4. Starte das Spiel wie gewohnt über Steam.
@@ -73,7 +73,7 @@ Verfügbarkeit und Ergebnisse hängen von Grafikkarte, Treiber und Szene ab. Das
 
 ## Systemanforderungen
 
-RE:FRAME benötigt eine legal erworbene Steam-Kopie von Persona 3 Reload, Windows 10 oder 11 x64, DirectX 12 und einen geeigneten Grafiktreiber. Version 1.1.4 ist für **Steam-Build 22672075** (App-ID **2161700**) vorgesehen.
+RE:FRAME benötigt eine legal erworbene Steam-Kopie von Persona 3 Reload, Windows 10 oder 11 x64, DirectX 12 und einen geeigneten Grafiktreiber. Version 1.1.5 ist für **Steam-Build 22672075** (App-ID **2161700**) vorgesehen.
 
 ### Unterstützte Grafikkarten
 

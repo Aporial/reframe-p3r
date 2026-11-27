@@ -2,9 +2,9 @@
 
 [English](../../README.md) · [Français](README.fr-FR.md) · [Italiano](README.it-IT.md) · [Deutsch](README.de-DE.md) · [Español (España)](README.es-ES.md) · [日本語](README.ja-JP.md) · [한국어](README.ko-KR.md) · [Polski](README.pl-PL.md) · [Português (Brasil)](README.pt-BR.md) · [Русский](README.ru-RU.md) · **[简体中文](README.zh-CN.md)** · [繁體中文](README.zh-TW.md) · [Türkçe](README.tr-TR.md) · [Українська](README.uk-UA.md)
 
-<!-- source-readme: 8deef3923bb5be1cd0937c169e899628281472fb -->
+<!-- source-readme: b12cefc126e3d34cc793adb23450c6fb1ae2ac13 -->
 
-![版本 1.1.4](https://img.shields.io/badge/release-1.1.4-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT 许可证](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+![版本 1.1.5](https://img.shields.io/badge/release-1.1.5-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT 许可证](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 在 **Persona 3 Reload** 中减少锯齿和闪烁，无需把渲染比例调到 200%。使用 DLAA 或 FSR、XeSS 的原生抗锯齿，可以按屏幕分辨率渲染并平滑边缘。如果更在意帧率，可以选择超分辨率模式。
 
@@ -16,7 +16,7 @@
 
 ## 安装
 
-1. 关闭游戏，从 [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) 下载 **REFRAME-P3R-v1.1.4.zip**。
+1. 关闭游戏，从 [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) 下载 **REFRAME-P3R-v1.1.5.zip**。
 2. 在 Steam 中右键点击 **Persona 3 Reload**，选择 **属性 → 已安装文件 → 浏览**。
 3. 将 ZIP 解压到已经包含 `P3R` 的游戏根目录。解压后，`d3d12.dll` 会放在 `P3R\Binaries\Win64` 中，与 `P3R.exe` 同级。
 4. 像平时一样通过 Steam 启动游戏。
@@ -73,7 +73,7 @@ ZIP 已包含模组和所需的图形运行库。直接在游戏菜单中设置�
 
 ## 系统要求
 
-RE:FRAME 需要在 Steam 合法购买的 Persona 3 Reload、64 位 Windows 10 或 11、DirectX 12 和兼容的显卡驱动。1.1.4 面向 **Steam 构建版本 22672075**（应用 ID **2161700**）。
+RE:FRAME 需要在 Steam 合法购买的 Persona 3 Reload、64 位 Windows 10 或 11、DirectX 12 和兼容的显卡驱动。1.1.5 面向 **Steam 构建版本 22672075**（应用 ID **2161700**）。
 
 ### 支持的显卡
 

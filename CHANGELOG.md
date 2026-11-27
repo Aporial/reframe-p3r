@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.5 — City Map Super Resolution
+
+- The city map can use the selected DLSS, FSR or XeSS render scale. A correction to the full-output map background keeps it aligned with the UI. The map returns to the game's scale if the correction cannot be applied.
+- The r4 diagnostic recorded native-output map reconstruction with all three Quality modes and with DLSS and FSR Performance at 1080p on a GeForce RTX 5060. The packaged 1.1.5 DLL also recorded the correction with FSR Performance using its defaults. [Test coverage](docs/TOWN_MAP_UPSCALING_TEST.md)
+
 ## 1.1.4 — City Map Fix
 
 - Fixed clipping of the city map's 3D background with Super Resolution enabled. The map uses the game's scale and upscale method, and gameplay resumes with the selected SDK scale when the map closes.

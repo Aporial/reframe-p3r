@@ -44,8 +44,8 @@ Run `build.ps1 -ViewScaleTests` to compile and run the CPU regression for view-s
 powershell -NoProfile -File scripts\New-Release.ps1
 ```
 
-The script stages an allowlisted payload, writes a hash manifest and generates `dist\REFRAME-P3R-v1.1.4.zip` and `dist\REFRAME-P3R-v1.1.4.zip.sha256`. The archive starts at `P3R\Binaries\Win64`. Pass the same `-BuildDirectory` and `-DependencyRoot` overrides if you used them to build. To build a fresh package when a stage already exists, use a new `-OutputDirectory`.
+The script stages an allowlisted payload, writes a hash manifest and generates `dist\REFRAME-P3R-v1.1.5.zip` and `dist\REFRAME-P3R-v1.1.5.zip.sha256`. The archive starts at `P3R\Binaries\Win64`. Pass the same `-BuildDirectory` and `-DependencyRoot` overrides if you used them to build. To build a fresh package when a stage already exists, use a new `-OutputDirectory`.
 
 The ZIP includes the project’s [MIT License](../LICENSE) and separate vendor notices. Review the [third-party notices](../THIRD_PARTY_NOTICES.md) before distributing the result.
 
-Run `tests\release_package.ps1 -Archive dist\REFRAME-P3R-v1.1.4.zip` to verify the archive checksum, localized guides, manifest and uninstaller against disposable fixtures in the build directory.
+Run `tests\release_package.ps1 -Archive dist\REFRAME-P3R-v1.1.5.zip` to verify the archive checksum, localized guides, manifest and uninstaller against disposable fixtures in the build directory.

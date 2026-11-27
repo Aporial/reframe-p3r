@@ -2,7 +2,7 @@
 
 **[English](README.md)** · [Français](docs/i18n/README.fr-FR.md) · [Italiano](docs/i18n/README.it-IT.md) · [Deutsch](docs/i18n/README.de-DE.md) · [Español (España)](docs/i18n/README.es-ES.md) · [日本語](docs/i18n/README.ja-JP.md) · [한국어](docs/i18n/README.ko-KR.md) · [Polski](docs/i18n/README.pl-PL.md) · [Português (Brasil)](docs/i18n/README.pt-BR.md) · [Русский](docs/i18n/README.ru-RU.md) · [简体中文](docs/i18n/README.zh-CN.md) · [繁體中文](docs/i18n/README.zh-TW.md) · [Türkçe](docs/i18n/README.tr-TR.md) · [Українська](docs/i18n/README.uk-UA.md)
 
-![Release 1.1.4](https://img.shields.io/badge/release-1.1.4-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+![Release 1.1.5](https://img.shields.io/badge/release-1.1.5-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 Smooth jagged edges and reduce shimmering in **Persona 3 Reload** without setting Rendering Scale to 200%. Use DLAA, FSR Native AA, or XeSS Native AA for cleaner visuals at your screen’s resolution. If you want more performance, choose an upscaling mode.
 
@@ -14,7 +14,7 @@ Smooth jagged edges and reduce shimmering in **Persona 3 Reload** without settin
 
 ## Installation
 
-1. Close the game and download **REFRAME-P3R-v1.1.4.zip** from [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest).
+1. Close the game and download **REFRAME-P3R-v1.1.5.zip** from [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest).
 2. In Steam, right-click **Persona 3 Reload** and choose **Properties → Installed Files → Browse**.
 3. Extract the ZIP into the folder that already contains `P3R`. The ZIP puts `d3d12.dll` next to `P3R.exe` in `P3R\Binaries\Win64`.
 4. Launch the game normally through Steam.
@@ -71,7 +71,7 @@ Availability and results depend on your GPU, driver, and the scene. The menu sho
 
 ## Requirements
 
-RE:FRAME requires a legally purchased copy of Persona 3 Reload on Steam, Windows 10 or 11 x64, DirectX 12, and a suitable graphics driver. Version 1.1.4 targets **Steam build 22672075** (app ID **2161700**).
+RE:FRAME requires a legally purchased copy of Persona 3 Reload on Steam, Windows 10 or 11 x64, DirectX 12, and a suitable graphics driver. Version 1.1.5 targets **Steam build 22672075** (app ID **2161700**).
 
 ### Supported hardware
 
