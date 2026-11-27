@@ -10,14 +10,15 @@ The fix reads the game's `TownMap` pause state when the viewport constructs its 
 
 ## Verified in-game
 
-The tester confirmed that the clipping was gone with test build 1.1.3 on Steam build 22672075 at 1920×1080 on a GeForce RTX 5060. The journal recorded these two map cycles with FSR 3.1.6 and NVIDIA DLSS.
+The tester confirmed that the clipping was gone with test build 1.1.3 on Steam build 22672075 at 1920×1080 on a GeForce RTX 5060. The journal recorded the map opening with FSR 3.1.6, NVIDIA DLSS and cross-vendor Intel XeSS.
 
 | Mode | Gameplay before opening the map | Map render and output at stock scale | Gameplay after closing the map |
 | --- | --- | --- | --- |
 | FSR Quality | 1280×720 → 1920×1080 | 1920×1080 → 1920×1080 | 1280×720 → 1920×1080 |
 | DLSS Quality (model K) | 1280×720 → 1920×1080 | 1920×1080 → 1920×1080 | 1280×720 → 1920×1080 |
+| XeSS Quality | 1130×636 → 1920×1080 | 1920×1080 → 1920×1080 | No post-close log sample |
 
-Release 1.1.4 ships the same rendering code. Its Windows x64 build, CPU regressions, ZIP and uninstaller are verified offline. XeSS, other quality modes, other output resolutions and additional screens await dedicated in-game checks of this fix.
+Release 1.1.4 ships the same rendering code. Its Windows x64 build, CPU regressions, ZIP and uninstaller are verified offline. Other quality modes, other output resolutions and additional screens await dedicated in-game checks of this fix.
 
 ## Manual checks
 

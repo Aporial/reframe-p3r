@@ -10,7 +10,7 @@ Download **REFRAME-P3R-v1.1.4.zip** and its **.sha256** file from the release as
 
 ## Validation
 
-The map fix was tested in build 1.1.3 on a GeForce RTX 5060 at 1920×1080 with FSR 3.1.6 Quality and DLSS Quality. The map rendered at 1920×1080 in both cases. After closing it, gameplay resumed scaling from 1280×720 to 1920×1080. Version 1.1.4 ships the same rendering code and passed the Windows x64 build, CPU regressions and package checks. The XeSS map cycle awaits a dedicated manual check. [City map verification](https://github.com/Aporial/reframe-p3r/blob/v1.1.4/docs/CITY_MAP_TESTING.md) · [Compatibility](https://github.com/Aporial/reframe-p3r/blob/v1.1.4/docs/COMPATIBILITY.md)
+The map fix was tested in build 1.1.3 on a GeForce RTX 5060 with FSR 3.1.6 Quality, DLSS Quality and XeSS Quality. The map rendered at 1920×1080 in all three modes. The journal also confirmed that FSR and DLSS resumed upscaling after the map closed. Version 1.1.4 ships the same rendering code and passed the Windows x64 build, CPU regressions and package checks. [City map verification](https://github.com/Aporial/reframe-p3r/blob/v1.1.4/docs/CITY_MAP_TESTING.md) · [Compatibility](https://github.com/Aporial/reframe-p3r/blob/v1.1.4/docs/COMPATIBILITY.md)
 
 ## License
 
