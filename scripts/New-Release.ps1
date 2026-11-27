@@ -54,7 +54,14 @@ $manifest = [ordered]@{
     Files = @(
         foreach ($entry in $files.GetEnumerator()) {
             $target = Join-Path $bin $entry.Key
-            Copy-Item -LiteralPath $entry.Value -Destination $target
+            if ($entry.Key -eq 'ReFrame/README.md' -or $entry.Key -like 'ReFrame/i18n/INSTALLATION.*.md') {
+                $guide = Get-Content -LiteralPath $entry.Value -Raw -Encoding UTF8
+                $guide = $guide -replace 'REFRAME-P3R-v\d+\.\d+\.\d+\.zip', $archiveName
+                $guide = $guide -replace '(?m)^(# [^\r\n]+?[ \t])\d+\.\d+\.\d+(?=[ \t·\r\n])', ('${1}' + $version)
+                [IO.File]::WriteAllText($target, $guide, [Text.UTF8Encoding]::new($false))
+            } else {
+                Copy-Item -LiteralPath $entry.Value -Destination $target
+            }
             [ordered]@{ Name = $entry.Key; SHA256 = (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash }
         }
     )

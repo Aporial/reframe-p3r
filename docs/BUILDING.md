@@ -36,14 +36,16 @@ The optional `-GpuSmokeTest` switch builds `gpu_smoke.exe`. Pass `dlss`, `fsr` o
 
 `-SharpnessTests` builds `sharpness_tests.exe`. Run it without arguments for the CPU checks. Use `--warp` for software D3D12 or `--hardware` for the high-performance adapter. The GPU fixture reports the isolated CAS and copy time, CPU recording overhead, and scratch allocation at common output sizes.
 
+Run `build.ps1 -ViewScaleTests` to compile and run the CPU regression for view-scale routing, including the city map and nested pauses.
+
 ## Release ZIP
 
 ```powershell
 powershell -NoProfile -File scripts\New-Release.ps1
 ```
 
-The script stages an allowlisted payload, writes a hash manifest and generates `dist\REFRAME-P3R-v1.1.0.zip` and `dist\REFRAME-P3R-v1.1.0.zip.sha256`. The archive starts at `P3R\Binaries\Win64`. Pass the same `-BuildDirectory` and `-DependencyRoot` overrides if you used them to build. To build a fresh package when a stage already exists, use a new `-OutputDirectory`.
+The script stages an allowlisted payload, writes a hash manifest and generates `dist\REFRAME-P3R-v1.1.4.zip` and `dist\REFRAME-P3R-v1.1.4.zip.sha256`. The archive starts at `P3R\Binaries\Win64`. Pass the same `-BuildDirectory` and `-DependencyRoot` overrides if you used them to build. To build a fresh package when a stage already exists, use a new `-OutputDirectory`.
 
 The ZIP includes the project’s [MIT License](../LICENSE) and separate vendor notices. Review the [third-party notices](../THIRD_PARTY_NOTICES.md) before distributing the result.
 
-Run `tests\release_package.ps1 -Archive dist\REFRAME-P3R-v1.1.0.zip` to verify the archive checksum, localized guides, manifest and uninstaller against disposable fixtures in the build directory.
+Run `tests\release_package.ps1 -Archive dist\REFRAME-P3R-v1.1.4.zip` to verify the archive checksum, localized guides, manifest and uninstaller against disposable fixtures in the build directory.

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.4 — City Map Fix
+
+- Fixed clipping of the city map's 3D background with Super Resolution enabled. The map uses the game's scale and upscale method, and gameplay resumes with the selected SDK scale when the map closes.
+- Scoped temporal upsampling to the local-player view that uses the SDK scale. Independent views keep their game-selected upscale methods.
+- Verified the map cycle in test build 1.1.3 with FSR Quality and DLSS Quality at 1080p. Release 1.1.4 ships the same rendering code. [Test coverage](docs/CITY_MAP_TESTING.md)
+
 ## 1.1.0 — Sharpness Update
 
 - Added a shared Sharpness control for DLAA, DLSS, FSR, and XeSS, including Native AA modes. The native Graphics menu offers 0% to 100% in 5% increments and 13 languages.

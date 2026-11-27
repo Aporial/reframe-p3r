@@ -46,34 +46,31 @@ bool TemporalSettings::Override<T>::Restore() {
 
 void TemporalSettings::Discover() {
     const auto engine = BindEngineVariables();
-    upsampling_.values = engine.temporal_upsampling;
     samples_ = engine.temporal_samples;
     mip_bias_.values = engine.texture_mip_offset;
-    percentage_.values = engine.screen_percentage;
+    stock_percentage_ = engine.screen_percentage;
+    gameplay_percentage_bound_ = stock_percentage_ && CanOverride() && InstallGameplayScreenPercentage();
     sync_interval_ = engine.sync_interval;
     vsync_ = engine.vsync;
     max_fps_ = engine.max_fps;
-    Log("UE typed variables: temporal controls %s; screen percentage %s.",
-        CanOverride() ? "bound" : "unavailable", percentage_.values ? "bound" : "unavailable");
+    Log("UE typed variables: temporal controls %s; per-view TAAU and gameplay scale %s.",
+        CanOverride() ? "bound" : "unavailable", gameplay_percentage_bound_ ? "bound" : "unavailable");
 }
 
 bool TemporalSettings::SetScreenPercentage(float percentage) {
-    return percentage_.Set(percentage);
+    return CanScale() && SetGameplayScreenPercentage(percentage);
 }
 
 bool TemporalSettings::RestoreScreenPercentage() {
-    if (!percentage_.Restore()) return false;
-    Log("Restored game r.ScreenPercentage %.2f.", percentage_.values[1]);
+    if (!SetGameplayScreenPercentage(0.f)) return false;
+    Log("Released primary viewport scale override; the game owns the view-family scale.");
     return true;
 }
 
 bool TemporalSettings::MatchesScreenPercentage(Size display, Size pass) const {
-    if (!percentage_.values) return false;
-    for (size_t i = 0; i < percentage_.original.size(); ++i) {
-        if (MatchesScaledViewport(display, pass, percentage_.values[i]) ||
-            (percentage_.active && MatchesScaledViewport(display, pass, percentage_.original[i]))) return true;
-    }
-    return false;
+    return MatchesScaledViewport(display, pass, GameplayScreenPercentage()) ||
+        (stock_percentage_ && (MatchesScaledViewport(display, pass, stock_percentage_[0]) ||
+                              MatchesScaledViewport(display, pass, stock_percentage_[1])));
 }
 
 void TemporalSettings::Benchmark(bool enable) {
@@ -92,29 +89,26 @@ bool TemporalSettings::Apply(Technology technology, float percentage, int sample
     if (technology == Technology::Taa) {
         const bool restored_scale = RestoreScreenPercentage();
         const bool restored_bias = mip_bias_.Restore();
-        const bool restored_upsampling = upsampling_.Restore();
-        if (!overriding_samples_) return restored_scale || restored_bias || restored_upsampling;
+        if (!overriding_samples_) return restored_scale || restored_bias;
         if (samples_[1] == applied_samples_) samples_[1] = samples_[0];
         overriding_samples_ = false;
-        Log("Restored game temporal settings (upsampling %d, samples %d, mip bias %.3f).",
-            upsampling_.values[1], samples_[1], mip_bias_.values[1]);
+        Log("Restored game temporal settings (samples %d, mip bias %.3f).", samples_[1], mip_bias_.values[1]);
         return true;
     }
 
-    if (!CanOverride()) return false;
+    if (!CanScale()) return false;
     // UE TAAU already adds log2(render/display). FSR and DLSS need the
     // extra -1 LOD unit. XeSS uses the engine's scale term as-is.
     const float offset = technology == Technology::Xess ? 0.0f : -1.0f;
     const bool scale_changed = SetScreenPercentage(percentage);
     const bool bias_changed = mip_bias_.Set(offset);
-    const bool upsampling_changed = upsampling_.Set(1);
     const bool samples_changed = !overriding_samples_ || applied_samples_ != samples;
     // The game keeps ownership of the game-thread sample count (slot zero).
     samples_[1] = samples;
     applied_samples_ = samples;
     overriding_samples_ = true;
-    const bool changed = scale_changed || bias_changed || upsampling_changed || samples_changed;
-    if (changed) Log("UE temporal settings requested: Halton, %d base phases, mip bias offset %.1f, screen percentage %.3f.",
+    const bool changed = scale_changed || bias_changed || samples_changed;
+    if (changed) Log("UE temporal settings requested: Halton, %d base phases, mip bias offset %.1f, gameplay screen percentage %.3f.",
                      samples, offset, percentage);
     return changed;
 }

@@ -3,7 +3,8 @@ param(
     [string]$DependencyRoot = (Join-Path $PSScriptRoot '.deps'),
     [string]$BuildDirectory = (Join-Path $PSScriptRoot 'build/Release'),
     [switch]$GpuSmokeTest,
-    [switch]$SharpnessTests
+    [switch]$SharpnessTests,
+    [switch]$ViewScaleTests
 )
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
@@ -55,6 +56,11 @@ try {
                   'src/backends/xess.cpp','src/render/sharpness.cpp') | ForEach-Object { Join-Path $root $_ }
         Invoke-Tool $cl ($options + $includes + $test + $libraries +
             @('/link','/MACHINE:X64','/OUT:gpu_smoke.exe','/INCREMENTAL:NO'))
+    }
+    if ($ViewScaleTests) {
+        Invoke-Tool $cl ($options + $includes + @((Join-Path $root 'tests/view_scale.cpp'),
+            '/link','/MACHINE:X64','/OUT:view_scale_tests.exe','/INCREMENTAL:NO'))
+        Invoke-Tool (Join-Path $out 'view_scale_tests.exe') @()
     }
     if ($SharpnessTests) {
         $test = @('tests/sharpness_tests.cpp','src/config/settings.cpp','src/core/platform.cpp',

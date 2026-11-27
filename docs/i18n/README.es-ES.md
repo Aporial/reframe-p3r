@@ -2,9 +2,9 @@
 
 [English](../../README.md) · [Français](README.fr-FR.md) · [Italiano](README.it-IT.md) · [Deutsch](README.de-DE.md) · **[Español (España)](README.es-ES.md)** · [日本語](README.ja-JP.md) · [한국어](README.ko-KR.md) · [Polski](README.pl-PL.md) · [Português (Brasil)](README.pt-BR.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [Türkçe](README.tr-TR.md) · [Українська](README.uk-UA.md)
 
-<!-- source-readme: d635567e66ae8b9728ea8b204baf8079bd1c8590 -->
+<!-- source-readme: 8deef3923bb5be1cd0937c169e899628281472fb -->
 
-![Versión 1.1.0](https://img.shields.io/badge/release-1.1.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![Licencia MIT](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+![Versión 1.1.4](https://img.shields.io/badge/release-1.1.4-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![Licencia MIT](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 Suaviza los bordes dentados y reduce el parpadeo en **Persona 3 Reload** sin subir la escala de renderizado al 200 %. DLAA y el AA nativo de FSR o XeSS mejoran los contornos a la resolución de tu pantalla. Para ganar fluidez, prueba uno de los modos de escalado.
 
@@ -16,7 +16,7 @@ Suaviza los bordes dentados y reduce el parpadeo en **Persona 3 Reload** sin sub
 
 ## Instalación
 
-1. Cierra el juego y descarga **REFRAME-P3R-v1.1.0.zip** de [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest).
+1. Cierra el juego y descarga **REFRAME-P3R-v1.1.4.zip** de [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest).
 2. En Steam, haz clic derecho en **Persona 3 Reload** y selecciona **Propiedades → Archivos instalados → Explorar**.
 3. Extrae el ZIP en la carpeta que ya contiene `P3R`. El archivo coloca `d3d12.dll` junto a `P3R.exe` en `P3R\Binaries\Win64`.
 4. Inicia el juego desde Steam como de costumbre.
@@ -73,7 +73,7 @@ La disponibilidad y los resultados dependen de la GPU, el controlador y la escen
 
 ## Requisitos
 
-RE:FRAME requiere una copia de Persona 3 Reload adquirida legalmente en Steam, Windows 10 u 11 x64, DirectX 12 y un controlador gráfico adecuado. La versión 1.1.0 está destinada a la **compilación de Steam 22672075** (ID de aplicación **2161700**).
+RE:FRAME requiere una copia de Persona 3 Reload adquirida legalmente en Steam, Windows 10 u 11 x64, DirectX 12 y un controlador gráfico adecuado. La versión 1.1.4 está destinada a la **compilación de Steam 22672075** (ID de aplicación **2161700**).
 
 ### Tarjetas gráficas compatibles
 

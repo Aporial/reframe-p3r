@@ -7,7 +7,7 @@ class TemporalSettings {
 public:
     void Discover();
     bool Apply(Technology technology, float percentage = 100.0f, int samples = 16);
-    bool CanScale() const { return percentage_.values && CanOverride(); }
+    bool CanScale() const { return gameplay_percentage_bound_ && stock_percentage_ && CanOverride(); }
     bool SetScreenPercentage(float percentage);
     bool RestoreScreenPercentage();
     bool MatchesScreenPercentage(Size display, Size pass) const;
@@ -23,10 +23,10 @@ private:
         bool Restore();
     };
 
-    bool CanOverride() const { return upsampling_.values && samples_ && mip_bias_.values; }
-    Override<int32_t> upsampling_;
+    bool CanOverride() const { return samples_ && mip_bias_.values; }
     Override<float> mip_bias_;
-    Override<float> percentage_;
+    const float* stock_percentage_ = nullptr;
+    bool gameplay_percentage_bound_ = false;
     int32_t* samples_ = nullptr;
     int32_t applied_samples_ = 0;
     bool overriding_samples_ = false;

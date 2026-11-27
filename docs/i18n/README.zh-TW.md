@@ -2,9 +2,9 @@
 
 [English](../../README.md) · [Français](README.fr-FR.md) · [Italiano](README.it-IT.md) · [Deutsch](README.de-DE.md) · [Español (España)](README.es-ES.md) · [日本語](README.ja-JP.md) · [한국어](README.ko-KR.md) · [Polski](README.pl-PL.md) · [Português (Brasil)](README.pt-BR.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md) · **[繁體中文](README.zh-TW.md)** · [Türkçe](README.tr-TR.md) · [Українська](README.uk-UA.md)
 
-<!-- source-readme: d635567e66ae8b9728ea8b204baf8079bd1c8590 -->
+<!-- source-readme: 8deef3923bb5be1cd0937c169e899628281472fb -->
 
-![版本 1.1.0](https://img.shields.io/badge/release-1.1.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT 授權](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+![版本 1.1.4](https://img.shields.io/badge/release-1.1.4-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT 授權](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 在 **Persona 3 Reload** 中減少鋸齒和閃爍，不必把渲染比例拉到 200%。DLAA 或 FSR、XeSS 的原生反鋸齒 能在螢幕原本的解析度下平滑邊緣。如果想提高幀率，可以選擇超解析度模式。
 
@@ -16,7 +16,7 @@
 
 ## 安裝
 
-1. 關閉遊戲，從 [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) 下載 **REFRAME-P3R-v1.1.0.zip**。
+1. 關閉遊戲，從 [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest) 下載 **REFRAME-P3R-v1.1.4.zip**。
 2. 在 Steam 中以滑鼠右鍵點選 **Persona 3 Reload**，選擇 **內容 → 已安裝檔案 → 瀏覽**。
 3. 將 ZIP 解壓縮到已有 `P3R` 的遊戲根資料夾。解壓縮後，`d3d12.dll` 會與 `P3R.exe` 一同放在 `P3R\Binaries\Win64` 內。
 4. 像平常一樣從 Steam 啟動遊戲。
@@ -73,7 +73,7 @@ ZIP 已包含模組和必要的圖形執行階段程式庫。直接在遊戲選�
 
 ## 系統需求
 
-RE:FRAME 需要在 Steam 合法購買的 Persona 3 Reload、64 位元 Windows 10 或 11、DirectX 12 以及適用的顯示卡驅動程式。1.1.0 適用於 **Steam 組建 22672075**（應用程式 ID **2161700**）。
+RE:FRAME 需要在 Steam 合法購買的 Persona 3 Reload、64 位元 Windows 10 或 11、DirectX 12 以及適用的顯示卡驅動程式。1.1.4 適用於 **Steam 組建 22672075**（應用程式 ID **2161700**）。
 
 ### 支援的顯示卡
 

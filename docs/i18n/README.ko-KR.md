@@ -2,9 +2,9 @@
 
 [English](../../README.md) · [Français](README.fr-FR.md) · [Italiano](README.it-IT.md) · [Deutsch](README.de-DE.md) · [Español (España)](README.es-ES.md) · [日本語](README.ja-JP.md) · **[한국어](README.ko-KR.md)** · [Polski](README.pl-PL.md) · [Português (Brasil)](README.pt-BR.md) · [Русский](README.ru-RU.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [Türkçe](README.tr-TR.md) · [Українська](README.uk-UA.md)
 
-<!-- source-readme: d635567e66ae8b9728ea8b204baf8079bd1c8590 -->
+<!-- source-readme: 8deef3923bb5be1cd0937c169e899628281472fb -->
 
-![버전 1.1.0](https://img.shields.io/badge/release-1.1.0-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT 라이선스](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+![버전 1.1.4](https://img.shields.io/badge/release-1.1.4-2469ad) ![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-2469ad) ![DirectX 12](https://img.shields.io/badge/renderer-DirectX%2012-107c10) [![MIT 라이선스](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 **Persona 3 Reload**의 렌더링 배율을 200%로 높이지 않고도 계단 현상과 깜빡임을 줄일 수 있습니다. DLAA와 FSR·XeSS의 네이티브 AA는 화면 해상도에서 가장자리를 부드럽게 처리합니다. 프레임 속도를 높이고 싶다면 업스케일링 모드를 선택하세요.
 
@@ -16,7 +16,7 @@
 
 ## 설치
 
-1. 게임을 종료한 뒤 [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest)에서 **REFRAME-P3R-v1.1.0.zip**을 다운로드하세요.
+1. 게임을 종료한 뒤 [GitHub Releases](https://github.com/Aporial/reframe-p3r/releases/latest)에서 **REFRAME-P3R-v1.1.4.zip**을 다운로드하세요.
 2. Steam에서 **Persona 3 Reload**를 마우스 오른쪽 버튼으로 클릭하고 **속성 → 설치된 파일 → 찾아보기**를 선택하세요.
 3. `P3R` 폴더가 이미 있는 상위 폴더에 ZIP을 푸세요. `P3R\Binaries\Win64` 내의 `P3R.exe` 옆에 `d3d12.dll`이 배치됩니다.
 4. 평소처럼 Steam에서 게임을 실행하세요.
@@ -73,7 +73,7 @@ ZIP에 모드와 필요한 그래픽 라이브러리가 들어 있습니다. 게
 
 ## 시스템 요구 사항
 
-RE:FRAME을 사용하려면 Steam에서 정식 구매한 Persona 3 Reload, Windows 10 또는 11 x64, DirectX 12와 호환되는 그래픽 드라이버가 필요합니다. 1.1.0의 대상은 **Steam 빌드 22672075**(앱 ID **2161700**)입니다.
+RE:FRAME을 사용하려면 Steam에서 정식 구매한 Persona 3 Reload, Windows 10 또는 11 x64, DirectX 12와 호환되는 그래픽 드라이버가 필요합니다. 1.1.4의 대상은 **Steam 빌드 22672075**(앱 ID **2161700**)입니다.
 
 ### 지원 그래픽 카드
 

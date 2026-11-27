@@ -20,6 +20,8 @@ See the [README](../README.md#requirements) for per-backend GPU and runtime requ
 - For 1.1.0, the CPU/INI regressions and the synthetic HDR FP16 shader fixture passed on GeForce RTX 5060 and WARP. All 14 available SDK modes on the RTX 5060 passed standalone dispatch tests at 1920×1080. The test covered FSR 3.1.6 and cross-vendor XeSS.
 - The manual game test on Steam build 22672075 confirmed that Apply changed Sharpness in Performance modes at 1920×1080 on the RTX 5060. At 100%, the game logged CAS for 720/720 sampled frames with FSR 3.1.6 and 240/240 apiece with DLSS and XeSS. At 0%, sampled FSR frames bypassed CAS. The tester saw an image difference after the binding fix. Menu layout across every language, HUD and scene transitions, and controlled game frametime comparisons remain open. [Manual Sharpness checks](SHARPNESS_TESTING.md)
 
+- The city map fix was exercised on Steam build 22672075 at 1080p on the RTX 5060 with test build 1.1.3. The map used a full 1920×1080 stock view, and gameplay resumed with 1280×720 → 1920×1080 reconstruction in FSR 3.1.6 Quality and DLSS Quality. Release 1.1.4 uses the same rendering code and was checked offline. The XeSS map cycle and other modes await manual checks. [City map verification](CITY_MAP_TESTING.md)
+
 ### Sharpness fixture on GeForce RTX 5060
 
 These are means from 24 synthetic D3D12 samples at 50% Sharpness. GPU time includes CAS and one copy. CPU time covers recording after warm-up. Scratch allocation is per output binding and excludes the scene, SDK and fixture buffers. The D3D12 debug layer was unavailable on the test machine.

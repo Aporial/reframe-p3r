@@ -1,16 +1,18 @@
-# RE:FRAME — Persona 3 Reload 1.1.0 · Update für Bildschärfe
+# RE:FRAME — Persona 3 Reload 1.1.4
 
 Von Aporia. Für eine legal erworbene Steam-Kopie von Persona 3 Reload, App-ID **2161700**, Build **22672075**. Erfordert Windows x64 und DirectX 12.
 
 ## Neu in dieser Version
+
+Die Stadtkarte verwendet den Rendermaßstab des Spiels, damit ihr 3D-Hintergrund die gesamte Kartenfläche ausfüllt. Nach dem Schließen der Karte nutzt das Spiel wieder den gewählten Upscaling-Modus.
 
 **Schärfe** nutzt FidelityFX CAS, um die Bilddetails nach der Rekonstruktion mit DLAA, DLSS, FSR oder XeSS und vor dem Zeichnen des HUDs anzupassen. Der Regler reicht in 5-%-Schritten von 0 % (standardmäßig aus) bis 100 %. Änderungen werden im Grafikmenü übernommen und wirken sofort. Der Wert gilt für alle Verfahren und Qualitätsmodi. Original-TAA blendet den Regler aus.
 
 ## Installieren oder aktualisieren
 
 1. Beende das Spiel. Öffne in Steam **Eigenschaften → Installierte Dateien → Durchsuchen**.
-2. Falls `P3R\Binaries\Win64` bereits eine `d3d12.dll` enthält, befolge die Deinstallationsanleitung des zugehörigen Mods. Sichere beim Wechsel von einer RE:FRAME-Testversion 1.1.0 deren Dateien und entpacke die Version darüber.
-3. Vergleiche die SHA-256-Prüfsumme des ZIPs mit der Datei `.sha256`. Entpacke **REFRAME-P3R-v1.1.0.zip** in den Ordner, der `P3R` enthält. Starte das Spiel über Steam und wähle Verfahren, Qualitätsmodus und Schärfe.
+2. Falls `P3R\Binaries\Win64` bereits eine `d3d12.dll` enthält, befolge die Deinstallationsanleitung des zugehörigen Mods. Führe vor dem Aktualisieren von RE:FRAME das Skript `Remove-ReFrame.ps1` der bisherigen Version aus und entpacke dann die neue ZIP-Datei.
+3. Vergleiche die SHA-256-Prüfsumme des ZIPs mit der Datei `.sha256`. Entpacke **REFRAME-P3R-v1.1.4.zip** in den Ordner, der `P3R` enthält. Starte das Spiel über Steam und wähle Verfahren, Qualitätsmodus und Schärfe.
 
 Bewahre `ReFrame\Settings.ini` auf, um deine Einstellungen zu behalten. Bei älteren Entwicklungsversionen behältst du `P3RGraphicsEnhanced\Settings.ini`, bis RE:FRAME in den neuen Ordner schreibt. XeSS benötigt Microsoft Visual C++ Redistributable x64 14.40.33810 oder neuer.
 

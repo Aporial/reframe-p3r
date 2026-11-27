@@ -117,6 +117,7 @@ struct Runtime {
     float last_mip_bias = 0;
     unsigned frames = 0;
     unsigned waiting_frames = 0;
+    bool reported_off_plan_view = false;
     bool toggle_down = false;
     bool cycle_down = false;
     bool quality_down = false;
@@ -543,7 +544,7 @@ bool ApplyMenuGraphics(Settings settings) {
             if (ValidTarget(optimal, output, settings.quality)) {
                 const auto percentage = static_cast<float>(RenderScalePercent(optimal, output));
                 if (app.temporal.SetScreenPercentage(percentage))
-                    Log("Native menu set engine r.ScreenPercentage %.3f for target %ux%u -> %ux%u.",
+                    Log("Native menu requested gameplay viewport %.3f%% for target %ux%u -> %ux%u.",
                         percentage, optimal.width, optimal.height, output.width, output.height);
             }
         }
@@ -657,7 +658,6 @@ bool RenderUpscaled(ID3D12GraphicsCommandList* list, GameFrame& game) {
     auto& frame = game.frame;
     const Size output = MainDisplay(app, frame.display, frame.render);
     if (!output.width) return false;
-    app.main_view = {frame.display, output};
     if (app.diagnostic_hotkeys) UpdateToggle(app, output);
     app.temporal.Benchmark(app.benchmark);
     const auto now = Clock::now();
@@ -670,6 +670,7 @@ bool RenderUpscaled(ID3D12GraphicsCommandList* list, GameFrame& game) {
     const auto tech = app.active;
     const size_t slot = Slot(tech);
     if (tech == Technology::Taa || !app.available[slot] || app.queues.empty() || app.untracked_work) {
+        app.main_view = {frame.display, output};
         ReleaseFeature(app);
         return original(true);
     }
@@ -689,13 +690,27 @@ bool RenderUpscaled(ID3D12GraphicsCommandList* list, GameFrame& game) {
         const float percentage = static_cast<float>(RenderScalePercent(recommendation.optimal, output));
         app.plan = {settings, output, recommendation, percentage};
         app.waiting_frames = 0;
+        app.reported_off_plan_view = false;
         Log("%s / %s SDK optimal %ux%u -> %ux%u, min %ux%u, max %ux%u.",
             Names[slot], ModeName(settings), recommendation.optimal.width, recommendation.optimal.height, output.width, output.height,
             recommendation.minimum.width, recommendation.minimum.height, recommendation.maximum.width, recommendation.maximum.height);
     }
     const auto& plan = app.plan;
+    const bool matches_extent = frame.display == output && Accepts(plan, frame.render);
+    // A stock pass can share the window size and still be an independent view.
+    // The startup timeout qualifies a new selection only.
+    if (!matches_extent && app.frames && app.feature.settings == settings && app.feature.display == output) {
+        if (!app.reported_off_plan_view) {
+            Log("Preserving stock view outside the active SDK plan: render %ux%u (allocated %ux%u), output %ux%u (allocated %ux%u).",
+                frame.render.width, frame.render.height, game.color_allocation.width, game.color_allocation.height,
+                frame.display.width, frame.display.height, game.output_allocation.width, game.output_allocation.height);
+            app.reported_off_plan_view = true;
+        }
+        return false;
+    }
+    app.main_view = {frame.display, output};
     const bool changed_settings = app.temporal.Apply(tech, plan.percentage, HaltonBaseCount(plan, frame.render));
-    if (frame.display != output || !Accepts(plan, frame.render) ||
+    if (!matches_extent ||
         (settings.quality != Quality::Native && (!game.jitter_phases || game.jitter_phases > 127))) {
         if (!app.waiting_frames)
             Log("Waiting for SDK viewport: actual %ux%u -> %ux%u; expected %ux%u -> %ux%u.",
@@ -715,7 +730,7 @@ bool RenderUpscaled(ID3D12GraphicsCommandList* list, GameFrame& game) {
         static bool logged = false;
         if (!logged) Log("FSR needs the main view's reversed infinite perspective projection; preserving Original TAA for this view.");
         logged = true;
-        return original(true);
+        return false;
     }
     const ConfiguredFeature requested{settings, frame.render, output};
     if (app.feature != requested) {

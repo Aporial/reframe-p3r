@@ -1,4 +1,4 @@
-# RE:FRAME — Persona 3 Reload 1.1.0 · Sharpness Update
+# RE:FRAME — Persona 3 Reload 1.1.4
 
 **English** · [Français](i18n/INSTALLATION.fr-FR.md) · [Italiano](i18n/INSTALLATION.it-IT.md) · [Deutsch](i18n/INSTALLATION.de-DE.md) · [Español](i18n/INSTALLATION.es-ES.md) · [日本語](i18n/INSTALLATION.ja-JP.md) · [한국어](i18n/INSTALLATION.ko-KR.md) · [Polski](i18n/INSTALLATION.pl-PL.md) · [Português (Brasil)](i18n/INSTALLATION.pt-BR.md) · [Русский](i18n/INSTALLATION.ru-RU.md) · [简体中文](i18n/INSTALLATION.zh-CN.md) · [繁體中文](i18n/INSTALLATION.zh-TW.md) · [Türkçe](i18n/INSTALLATION.tr-TR.md) · [Українська](i18n/INSTALLATION.uk-UA.md)
 
@@ -6,13 +6,15 @@ By Aporia. For a legally purchased copy of Persona 3 Reload on Steam, app ID **2
 
 ## What's new
 
+The city map uses the game's own scale so its 3D background fills the map area. Your selected upscaling mode resumes when you close the map.
+
 **Sharpness** uses FidelityFX CAS to adjust scene detail after DLAA, DLSS, FSR or XeSS reconstruction and before the HUD is drawn. The default is 0% (off), and the range is 0–100% in 5% steps. Apply the change in the Graphics menu. The setting takes effect without restarting and is shared across technologies and quality modes. Original TAA hides the control.
 
 ## Install or update
 
 1. Close the game. In Steam, open **Properties → Installed Files → Browse**.
-2. If `P3R\Binaries\Win64` already contains a `d3d12.dll`, follow the owning mod's removal instructions. When upgrading from a 1.1.0 RE:FRAME test build, back up its files and extract the release over that installation.
-3. Compare the ZIP's SHA-256 against the companion `.sha256` file. Extract **REFRAME-P3R-v1.1.0.zip** into the folder that contains `P3R`. Launch through Steam and select a technology, quality mode and Sharpness in Graphics.
+2. If `P3R\Binaries\Win64` already contains a `d3d12.dll`, follow the owning mod's removal instructions. Before updating RE:FRAME, run the previous version’s `Remove-ReFrame.ps1` and then extract the new ZIP.
+3. Compare the ZIP's SHA-256 against the companion `.sha256` file. Extract **REFRAME-P3R-v1.1.4.zip** into the folder that contains `P3R`. Launch through Steam and select a technology, quality mode and Sharpness in Graphics.
 
 Keep `ReFrame\Settings.ini` to preserve your settings. If upgrading from an older development build, keep `P3RGraphicsEnhanced\Settings.ini` until RE:FRAME saves to its new folder. XeSS requires the Microsoft Visual C++ x64 Redistributable 14.40.33810 or later.
 

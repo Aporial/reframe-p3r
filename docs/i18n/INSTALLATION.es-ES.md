@@ -1,16 +1,18 @@
-# RE:FRAME — Persona 3 Reload 1.1.0 · Actualización de nitidez
+# RE:FRAME — Persona 3 Reload 1.1.4
 
 Por Aporia. Para una copia de Persona 3 Reload adquirida legalmente en Steam, ID de aplicación **2161700**, compilación **22672075**. Requiere Windows x64 y DirectX 12.
 
 ## Novedades
+
+El mapa de la ciudad usa la escala de renderizado del juego para que el fondo 3D ocupe toda el área del mapa. Al cerrarlo, se vuelve a aplicar el modo de reescalado elegido.
 
 **Nitidez** usa FidelityFX CAS para ajustar el detalle tras la reconstrucción con DLAA, DLSS, FSR o XeSS y antes de dibujar el HUD. Abarca del 0 % (desactivado por defecto) al 100 % en pasos del 5 %. Aplica el ajuste en el menú de gráficos. Se aplica sin reiniciar y el valor se conserva entre tecnologías y modos de calidad. El TAA original oculta el control.
 
 ## Instalar o actualizar
 
 1. Cierra el juego. En Steam, abre **Propiedades → Archivos instalados → Explorar**.
-2. Si ya hay un `d3d12.dll` en `P3R\Binaries\Win64`, sigue las instrucciones de retirada del mod correspondiente. Si actualizas una versión de prueba 1.1.0 de RE:FRAME, haz una copia de sus archivos y extrae la versión final sobre esa instalación.
-3. Compara el SHA-256 del ZIP con el archivo adjunto `.sha256`. Extrae **REFRAME-P3R-v1.1.0.zip** en la carpeta que contiene `P3R`. Inicia el juego desde Steam y elige la tecnología, el modo de calidad y la nitidez en el menú de gráficos.
+2. Si ya hay un `d3d12.dll` en `P3R\Binaries\Win64`, sigue las instrucciones de retirada del mod correspondiente. Para actualizar RE:FRAME, ejecuta primero `Remove-ReFrame.ps1` de la versión anterior y luego extrae el nuevo ZIP.
+3. Compara el SHA-256 del ZIP con el archivo adjunto `.sha256`. Extrae **REFRAME-P3R-v1.1.4.zip** en la carpeta que contiene `P3R`. Inicia el juego desde Steam y elige la tecnología, el modo de calidad y la nitidez en el menú de gráficos.
 
 Conserva `ReFrame\Settings.ini` para mantener los ajustes. Si vienes de una versión de desarrollo anterior, conserva `P3RGraphicsEnhanced\Settings.ini` hasta que RE:FRAME guarde en la carpeta nueva. XeSS requiere Microsoft Visual C++ Redistributable x64 14.40.33810 o posterior.
 

@@ -3,7 +3,6 @@
 
 namespace reframe {
 struct EngineVariables {
-    int32_t* temporal_upsampling;
     int32_t* temporal_samples;
     float* texture_mip_offset;
     float* screen_percentage;
@@ -13,4 +12,7 @@ struct EngineVariables {
 };
 
 EngineVariables BindEngineVariables();
+bool InstallGameplayScreenPercentage();
+bool SetGameplayScreenPercentage(float percentage);
+float GameplayScreenPercentage();
 }
